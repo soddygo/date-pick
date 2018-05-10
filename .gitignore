@@ -1,0 +1,7 @@
+# 忽略 文件夹
+node_modules/
+dist/
+
+# 忽略 文件.DS_store
+.DS_store
+.idea
