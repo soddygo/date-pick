@@ -1,4 +1,4 @@
-define('purchase/pages/search/search', function (require, exports, module) {
+define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, module) {
     /*cabin插件工具*/
 
     // cabin.widgets.loading
@@ -9,9 +9,9 @@ define('purchase/pages/search/search', function (require, exports, module) {
 
     var handle, _fn, page;
     page = Page({
-        nodeClass: 'purchase-pages-search',
+        nodeClass: 'purchase-pages-purchaseMain',
         parentClass: 'J_Main', // 没有就直接插入body，或者不插入
-        source: ['purchase/pages/search/purchaseMain.css', 'purchase/pages/search/purchaseMain.tpl'],
+        source: ['purchase/pages/purchaseMain/purchaseMain.css', 'purchase/pages/purchaseMain/purchaseMain.tpl'],
         show: function () {
             handle.jView = this.jView;
             /*页面进入触发*/
