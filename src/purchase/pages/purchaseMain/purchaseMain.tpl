@@ -130,18 +130,16 @@
                             <input type="checkbox" >
                             <label for="checkbox1"></label>
                         </div></th>
-                        <th>订单Id</th>
-                        <th>门店名称</th>
+                        <th>订单编号</th>
+                        <th>订单类型</th>
+                        <th>供应商</th>
+                        <th>订货金额(￥)</th>
+                        <th>订货日</th>
+                        <th>预计到货日</th>
+                        <th>订单来源</th>
+                        <th>加急订单</th>
+                        <th>创建人</th>
                         <th>订单状态</th>
-                        <th>支付方式</th>
-                        <th>下单时间</th>
-                        <th>收款时间</th>
-                        <th>应付</th>
-                        <th>实付</th>
-                        <th>稽核人员</th>
-                        <th style="min-width: 80px;">符号</th>
-                        <th>退款金额</th>
-                        <th style="width: 100px;">操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -150,66 +148,34 @@
                             <input type="checkbox" id="checkbox1">
                             <label for="checkbox1"></label>
                         </div></td>
-                        <td><span>注:没标题没按钮组表格没上下边线 有标题加table-top-bordered有分页加table-bottom-bordered</span></td>
-                        <td><div>西门店</div></td>
-                        <td><div>已完成</div></td>
-                        <td><div>微信支付</div></td>
-                        <td><div>2017.11.11 12:05:00</div></td>
-                        <td><div>2017.11.11 12:05:00</div></td>
-                        <td><div>55.00</div></td>
-                        <td><div>55.00</div></td>
-                        <td><div>前端人员</div></td>
-                        <td><div><select class="form-control">
-                            <option value="=">=</option>
-                            <option value="+">+</option>
-                        </select></div></td>
-                        <td><div><input class="form-control" value="12.45"></div></td>
-
-                        <td><div><span  class="event">查看详情</span></div></td>
+                        <td><div>1111</div></td>
+                        <td><div>采购订单</div></td>
+                        <td><div>test1</div></td>
+                        <td><div>1111.21</div></td>
+                        <td><div>2018-05-11</div></td>
+                        <td><div>2018-05-14</div></td>
+                        <td><div>test订单来源</div></td>
+                        <td><div> <input type="checkbox">
+                            <label for="checkbox1"></label></div></td>
+                        <td><div>admin</div></td>
+                        <td><div>已审核</div></td>
                     </tr>
                     <tr>
                         <td><div class="checkbox">
-                            <input type="checkbox" id="checkbox2" checked>
-                            <label for="checkbox2"></label>
+                            <input type="checkbox" id="checkbox2">
+                            <label for="checkbox1"></label>
                         </div></td>
-                        <td><span class="event">685518</span></td>
-                        <td><div>西门店</div></td>
-                        <td><div>已完成</div></td>
-                        <td><div>微信支付</div></td>
-                        <td><div>2017.11.11 12:05:00</div></td>
-                        <td><div>2017.11.11 12:05:00</div></td>
-                        <td><div>55.00</div></td>
-                        <td><div>55.00</div></td>
-                        <td><div>前端人员</div></td>
-                        <td><div><select class="form-control">
-                            <option value="=">=</option>
-                            <option value="+">+</option>
-                        </select></div></td>
-                        <td><div><input class="form-control" value="12.45"></div></td>
-
-                        <td><div><span  class="event">查看详情</span></div></td>
-                    </tr>
-                    <tr>
-                        <td><div class="checkbox">
-                            <input type="checkbox" id="checkbox3" checked>
-                            <label for="checkbox3"></label>
-                        </div></td>
-                        <td><span class="event">685518</span></td>
-                        <td><div>西门店</div></td>
-                        <td><div>已完成</div></td>
-                        <td><div>微信支付</div></td>
-                        <td><div>2017.11.11 12:05:00</div></td>
-                        <td><div>2017.11.11 12:05:00</div></td>
-                        <td><div>55.00</div></td>
-                        <td><div>55.00</div></td>
-                        <td><div>前端人员</div></td>
-                        <td><div><select class="form-control">
-                            <option value="=">=</option>
-                            <option value="+">+</option>
-                        </select></div></td>
-                        <td><div><input class="form-control" value="12.45"></div></td>
-
-                        <td><div><span  class="event">查看详情</span></div></td>
+                        <td><div>2222</div></td>
+                        <td><div>采购订单</div></td>
+                        <td><div>test1</div></td>
+                        <td><div>1111.21</div></td>
+                        <td><div>2018-05-11</div></td>
+                        <td><div>2018-05-14</div></td>
+                        <td><div>test订单来源</div></td>
+                        <td><div> <input type="checkbox">
+                            <label for="checkbox1"></label></div></td>
+                        <td><div>admin</div></td>
+                        <td><div>已审核</div></td>
                     </tr>
                     </tbody>
                 </table>
