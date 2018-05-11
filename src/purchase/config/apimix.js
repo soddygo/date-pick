@@ -34,8 +34,8 @@ define('purchase/config/apimix', function (require, exports, module) {
 
 	_fn = {
 		href: href,
-		HOST: EVT + 'setYourOwnOrigin', //这里设置接口域名
-		HOST1: EVT + 'setYourOwnOrigin1', //设置多个接口域名
+		HOST: EVT + 'localhost.dmall.com:8080', //这里设置接口域名
+		HOST1: EVT + 'localhost.dmall.com:8080', //设置多个接口域名
 		mixUrl: function (host, url) {
 			var p;
 

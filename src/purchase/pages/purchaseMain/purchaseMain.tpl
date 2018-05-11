@@ -1,8 +1,6 @@
 <!--合同查询-->
-<div class="purchase-pages-purchaseMain content-container">
-
-
-
+<div class="purchase-pages-purchaseMain content-container" id="purchase-pages-purchaseMain"
+     xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
     <!--滚动内容 需要添加 container-scroll 类-->
     <div class="container-scroll">
 
@@ -26,71 +24,71 @@
             <div class="cabin-base-form clearfix">
                 <div class="form-horizontal clearfix ">
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                        <label class="control-label"><span class="font-error"></span>订单编号</label>
+                        <label class="control-label">订单编号</label>
                         <div class="base-form-content clearfix">
-                            <input type="text" class="form-control" placeholder="请填写订单编号"/>
+                            <input type="text" class="form-control" placeholder="请填写订单编号" v-model="order.id"/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>供应商</label>
                         <div class="base-form-content clearfix">
-                            <input type="text" class="form-control" placeholder="请填写供应商"/>
+                            <input type="text" class="form-control" placeholder="请填写供应商" v-model="order.supplier"/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订货日期</label>
                         <div class="base-form-content clearfix date-group-box">
-                            <input type="text" class="form-control icondate icontime " placeholder="选择开始时间">
+                            <input type="text" class="form-control icondate icontime " placeholder="选择开始时间" v-model="order.goodsDateStart">
                             <label class="cabin-date-spin">至</label>
-                            <input type="text" class="form-control icondate icontime" placeholder="选择结束时间">
+                            <input type="text" class="form-control icondate icontime" placeholder="选择结束时间" v-model="order.goodsDateEnd">
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订单类型</label>
                         <div class="base-form-content clearfix">
-                            <select type="text" class="form-control" placeholder="请选择活动区域">
-                                <option value="北京">北京</option>
-                                <option value="成都">成都</option>
-                                <option value="杭州">杭州</option>
+                            <select type="text" class="form-control" placeholder="请选择订单类型" v-model="order.classSelected">
+                                <option v-for="option in orderClass" v-bind:value="option.key">{{option.value}}</option>
+
                             </select>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订单状态</label>
                         <div class="base-form-content clearfix">
-                            <select type="text" class="form-control" placeholder="请选择活动区域">
-                                <option value="北京">北京</option>
-                                <option value="成都">成都</option>
-                                <option value="杭州">杭州</option>
+                            <select type="text" class="form-control" placeholder="请选择订单状态" v-model="order.statusSelected">
+                                <option v-for="option in orderStatus" v-bind:value="option.key">{{option.value}}</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>商品</label>
                         <div class="base-form-content clearfix">
-                            <input type="text" class="form-control" placeholder="请填写供应商"/>
+                            <input type="text" class="form-control" placeholder="请填写商品" v-model="order.goodsName"/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label class="control-label"><span class="font-error"></span>ERP单号</label>
+                        <div class="base-form-content clearfix">
+                            <input type="text" class="form-control" placeholder="请填写ERP单号" v-model="order.erpId"/>
+                        </div>
+                    </div>  <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>采销平台单号</label>
                         <div class="base-form-content clearfix">
-                            <input type="text" class="form-control" placeholder="请填写供应商"/>
+                            <input type="text" class="form-control" placeholder="请填写采销平台单号" v-model="order.marketingId"/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订单来源</label>
                         <div class="base-form-content clearfix">
-                            <select type="text" class="form-control" placeholder="请选择活动区域">
-                                <option value="北京">北京</option>
-                                <option value="成都">成都</option>
-                                <option value="杭州">杭州</option>
+                            <select type="text" class="form-control" placeholder="请选择订单来源" v-model="order.sourceSelected">
+                                <option v-for="option in orderSource" v-bind:value="option.key">{{option.value}}</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>创建人</label>
                         <div class="base-form-content clearfix">
-                            <input type="text" class="form-control" placeholder="请填写供应商"/>
+                            <input type="text" class="form-control" placeholder="请填写创建人"/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -98,7 +96,7 @@
                         <!--行模块：内容-->
                         <div class="base-form-content clearfix">
                             <div class="checkbox-inline">
-                                <input type="checkbox" id="checkbox1" checked>
+                                <input type="checkbox" v-model="order.urgenFlag">
                                 <label for="checkbox1">加急订单</label>
                             </div>
                         </div>
@@ -110,7 +108,7 @@
             <!--搜索条件结束-->
             <!--搜索按钮-->
             <div class="stage-search right">
-                <button class="btn btn-primary">查询</button>
+                <button class="btn btn-primary" v-on:click="doQuery">查询</button>
             </div>
             <!--搜索按钮结束-->
         </div>

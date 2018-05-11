@@ -1,5 +1,5 @@
 <!--如果要保存页面状态 请在同id级添加 keep-alive 标签 并且在js beforeDestroy 方法内去掉Object.assign 方法  <div id="app" keep-alive></div> -->
-<div class="cabin-page-vuePage content-container" id="app" >
+<div class="cabin-page-vuePage content-container" id="app" xmlns:v-timepicker="http://www.w3.org/1999/xhtml">
     <div class="content-container">
         <!--固定位置内容-->
         <div class="container-fixed">
