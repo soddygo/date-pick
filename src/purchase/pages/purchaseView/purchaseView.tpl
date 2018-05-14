@@ -403,6 +403,38 @@
             <!--分页-->
             <div id="page"></div>
             <!--分页end-->
+
+        </div>
+
+        <div class="stage">
+            <div class="cabin-base-form clearfix">
+                <div class="form-horizontal clearfix ">
+                    <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label class="control-label"><span class="font-error"></span>制单人</label>
+                        <div class="base-form-content clearfix">
+                            <input type="text" class="form-control" placeholder="请填写制单人" disabled/>
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label class="control-label"><span class="font-error"></span>制单时间</label>
+                        <div class="base-form-content clearfix">
+                            <input type="text" class="form-control" placeholder="请填写制单时间" disabled/>
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label class="control-label"><span class="font-error"></span>审核人</label>
+                        <div class="base-form-content clearfix">
+                            <input type="text" class="form-control" placeholder="请填写审核人" disabled/>
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label class="control-label"><span class="font-error"></span>审核时间</label>
+                        <div class="base-form-content clearfix">
+                            <input type="text" class="form-control" placeholder="请填写审核时间" disabled/>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!--搜索结果stage end-->
