@@ -1,4 +1,4 @@
-define('purchase/pages/purchaseCreate/purchaseCreate', function (require, exports, module) {
+define('purchase/pages/purchaseQuery/purchaseQuery', function (require, exports, module) {
     /*cabin插件工具*/
 
     // cabin.widgets.loading

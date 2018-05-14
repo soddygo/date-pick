@@ -38,25 +38,29 @@
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订货日期</label>
                         <div class="base-form-content clearfix date-group-box">
-                            <input type="text" class="form-control icondate icontime " placeholder="选择开始时间" v-model="order.goodsDateStart">
+                            <input type="text" class="form-control icondate icontime " placeholder="选择开始时间"
+                                   v-model="order.goodsDateStart">
                             <label class="cabin-date-spin">至</label>
-                            <input type="text" class="form-control icondate icontime" placeholder="选择结束时间" v-model="order.goodsDateEnd">
+                            <input type="text" class="form-control icondate icontime" placeholder="选择结束时间"
+                                   v-model="order.goodsDateEnd">
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订单类型</label>
                         <div class="base-form-content clearfix">
-                            <select type="text" class="form-control" placeholder="请选择订单类型" v-model="order.classSelected">
+                            <select type="text" class="form-control" placeholder="请选择订单类型"
+                                    v-model="order.classSelected">
                                 <option v-for="option in orderClass" v-bind:value="option.key">{{option.value}}</option>
-
                             </select>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订单状态</label>
                         <div class="base-form-content clearfix">
-                            <select type="text" class="form-control" placeholder="请选择订单状态" v-model="order.statusSelected">
-                                <option v-for="option in orderStatus" v-bind:value="option.key">{{option.value}}</option>
+                            <select type="text" class="form-control" placeholder="请选择订单状态"
+                                    v-model="order.statusSelected">
+                                <option v-for="option in orderStatus" v-bind:value="option.key">{{option.value}}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -71,17 +75,21 @@
                         <div class="base-form-content clearfix">
                             <input type="text" class="form-control" placeholder="请填写ERP单号" v-model="order.erpId"/>
                         </div>
-                    </div>  <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    </div>
+                    <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>采销平台单号</label>
                         <div class="base-form-content clearfix">
-                            <input type="text" class="form-control" placeholder="请填写采销平台单号" v-model="order.marketingId"/>
+                            <input type="text" class="form-control" placeholder="请填写采销平台单号"
+                                   v-model="order.marketingId"/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订单来源</label>
                         <div class="base-form-content clearfix">
-                            <select type="text" class="form-control" placeholder="请选择订单来源" v-model="order.sourceSelected">
-                                <option v-for="option in orderSource" v-bind:value="option.key">{{option.value}}</option>
+                            <select type="text" class="form-control" placeholder="请选择订单来源"
+                                    v-model="order.sourceSelected">
+                                <option v-for="option in orderSource" v-bind:value="option.key">{{option.value}}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -95,9 +103,12 @@
                         <label class="control-label"></label>
                         <!--行模块：内容-->
                         <div class="base-form-content clearfix">
-                            <div class="checkbox-inline">
-                                <input type="checkbox" v-model="order.urgenFlag">
-                                <label for="checkbox1">加急订单</label>
+                            <div class="switch-inline">
+                                <input type="checkbox" id="switch_urgenFlag" v-model="order.urgenFlag" v-on:click="testClick">
+                                <label for="switch_urgenFlag">
+                                    <span>非加急订单</span>
+                                    <span>加急订单</span>
+                                </label>
                             </div>
                         </div>
                         <!--行模块：内容end-->
@@ -124,10 +135,12 @@
                 <table class="cabinTable table table-hover  table-bottom-bordered table-event">
                     <thead>
                     <tr>
-                        <th><div class="checkbox">
-                            <input type="checkbox" >
-                            <label for="checkbox1"></label>
-                        </div></th>
+                        <th>
+                            <div class="checkbox">
+                                <input type="checkbox">
+                                <label></label>
+                            </div>
+                        </th>
                         <th>订单编号</th>
                         <th>订单类型</th>
                         <th>供应商</th>
@@ -141,39 +154,83 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td><div class="checkbox">
-                            <input type="checkbox" id="checkbox1">
-                            <label for="checkbox1"></label>
-                        </div></td>
-                        <td><div>1111</div></td>
-                        <td><div>采购订单</div></td>
-                        <td><div>test1</div></td>
-                        <td><div>1111.21</div></td>
-                        <td><div>2018-05-11</div></td>
-                        <td><div>2018-05-14</div></td>
-                        <td><div>test订单来源</div></td>
-                        <td><div> <input type="checkbox">
-                            <label for="checkbox1"></label></div></td>
-                        <td><div>admin</div></td>
-                        <td><div>已审核</div></td>
+                    <tr v-on:dblclick="dbClickView($event)">
+                        <td>
+                            <div class="checkbox">
+                                <input type="checkbox" >
+                                <label></label>
+                            </div>
+                        </td>
+                        <td>
+                            <div>1111</div>
+                        </td>
+                        <td>
+                            <div>采购订单</div>
+                        </td>
+                        <td>
+                            <div>test1</div>
+                        </td>
+                        <td>
+                            <div>1111.21</div>
+                        </td>
+                        <td>
+                            <div>2018-05-11</div>
+                        </td>
+                        <td>
+                            <div>2018-05-14</div>
+                        </td>
+                        <td>
+                            <div>test订单来源</div>
+                        </td>
+                        <td>
+                            <div><input type="checkbox">
+                                <label></label></div>
+                        </td>
+                        <td>
+                            <div>admin</div>
+                        </td>
+                        <td>
+                            <div>已审核</div>
+                        </td>
                     </tr>
-                    <tr>
-                        <td><div class="checkbox">
-                            <input type="checkbox" id="checkbox2">
-                            <label for="checkbox1"></label>
-                        </div></td>
-                        <td><div>2222</div></td>
-                        <td><div>采购订单</div></td>
-                        <td><div>test1</div></td>
-                        <td><div>1111.21</div></td>
-                        <td><div>2018-05-11</div></td>
-                        <td><div>2018-05-14</div></td>
-                        <td><div>test订单来源</div></td>
-                        <td><div> <input type="checkbox">
-                            <label for="checkbox1"></label></div></td>
-                        <td><div>admin</div></td>
-                        <td><div>已审核</div></td>
+                    <tr v-on:dblclick="dbClickView($event)">
+                        <td>
+                            <div class="checkbox">
+                                <input type="checkbox">
+                                <label ></label>
+                            </div>
+                        </td>
+                        <td>
+                            <div>2222</div>
+                        </td>
+                        <td>
+                            <div>采购订单</div>
+                        </td>
+                        <td>
+                            <div>test1</div>
+                        </td>
+                        <td>
+                            <div>1111.21</div>
+                        </td>
+                        <td>
+                            <div>2018-05-11</div>
+                        </td>
+                        <td>
+                            <div>2018-05-14</div>
+                        </td>
+                        <td>
+                            <div>test订单来源</div>
+                        </td>
+                        <td>
+                            <div><input type="checkbox">
+                                <label></label></div>
+                        </td>
+                        <td>
+                            <div>admin</div>
+                        </td>
+                        <td>
+                            <div>已审核</div>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

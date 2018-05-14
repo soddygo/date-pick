@@ -1,4 +1,4 @@
-define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, module) {
+define('purchase/pages/purchaseView/purchaseView', function (require, exports, module) {
     /*cabin插件工具*/
 
     // cabin.widgets.loading
@@ -7,27 +7,7 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
     // cabin.widgets.tips
     // cabin.tools.cookie
 
-    var ajax = require('purchase/common/data/ajax');
-
-    require('cabin/lib/daterangepicker/moment.js');
-    require('cabin/widgets/pddatepicker/pddatepicker.js');
-
     var handle, _fn, page;
-    //object construct
-    let order = {
-        id: '',//订单编号
-        supplier: "",//供应商编号或者名称
-        goodsDateStart: "",//订货日期开始
-        goodsDateEnd: "",//订货日期结束
-        classSelected: "all",//订单类型
-        statusSelected: "all",//订单状态
-        goodsName: "",//商品编号或者名称
-        erpId: "",//ERP单号
-        marketingId: "",//采销平台单号
-        sourceSelected: "all",//订单来源
-        preparedByPeople: "",//创建人
-        urgenFlag: false,//加急订单标记,false:普通订单;true:加急订单
-    };
     //订单类型枚举
     let orderClass = [
         {key: "all", value: "全部"},
@@ -46,32 +26,38 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
         {key: "complete", value: "已完成"},
         {key: "close", value: "已关闭"},
     ];
-    //订单来源
-    let orderSource = [
-        {key: "all", value: "全部"},
-        {key: "1", value: "手工创建"},
-        {key: "2", value: "ERP同步"},
-    ];
+    //当前页面是否可以修改等标记
+    let flagCollect = {
+        operationFlag: 1,//1:查看; 2:修改
+        hasSaveFlag: 1,//1:已经保存;2:存在未保存数据
+        // orderTableFlag: 1,//1:采购订单显示;2:采购退单显示
+    };
+    //行数据信息
+    //TODO 初始化数据,后面要修改,这里是便于测试用
+    let rowData = {
+        classSelected: "P01",
+        statusSelected: "save",
 
-
+    };
+    //采购订单明细
     page = Page({
-        nodeClass: 'purchase-pages-purchaseMain',
+        nodeClass: 'purchase-pages-purchaseView',
         parentClass: 'J_Main', // 没有就直接插入body，或者不插入
-        source: ['purchase/pages/purchaseMain/purchaseMain.css', 'purchase/pages/purchaseMain/purchaseMain.tpl'],
-        pageTitle: '采购管理',//当前页面需要展示的title
+        source: ['purchase/pages/purchaseView/purchaseView.css', 'purchase/pages/purchaseView/purchaseView.tpl'],
+        pageTitle: '订单详情',//当前页面需要展示的title
         cabinVue: {
             //这里this 指向当前VUE 实例,仅支持es5语法！！已经默认添加了timepicker 指令
             //使用vue时　不要使用handle.jView 统一使用$ 筛选或者使用$(this.$el).find(xxx)去实现；this.$el为vue实例dom 节点
             //使用vue 后可以不使用page 的show hide 方法,建议使用vue 自己的 mounted 取代show方法 destroy 取代hide 方法
-            el: '#purchase-pages-purchaseMain',
+            el: '#purchase-pages-purchaseView',
             //这里必须 使用一个方法返回给data
             data: function () {
 
                 return {
-                    order: order,
+                    rowData: rowData,
+                    flagCollect: flagCollect,
                     orderClass: orderClass,
                     orderStatus: orderStatus,
-                    orderSource: orderSource,
                 }
             },
             mounted: function () {
@@ -83,23 +69,17 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
 
                 });
 
+                //获取入参
+                let params = kayak.router.requestParam;
+                rowData = $.extend(rowData, params);
+                flagCollect.operationFlag = params.operationFlag;//当前页面查看标记,只读,还是编辑模式
+                console.log("params:" + JSON.stringify(params));
+                console.log("flagCollect.operationFlag:" + JSON.stringify(flagCollect.operationFlag));
+
                 //init datePick
                 //current date
                 let currentDateStr = moment().format('YYYY-MM-DD');
-                console.log("currentDateStr:"+currentDateStr);
-                $('.icondate').PdDatePicker({
-                    startView: 2,
-                    minView: 3,
-                    initDate:currentDateStr,
-                    format: 'YYYY-MM-DD',
-                    //containerId: 'abc'
-                }).on('change', function (evt, data) {
-                    console.log(data)
-                });
-
-                this.order.goodsDateStart = currentDateStr;
-                this.order.goodsDateEnd = currentDateStr;
-
+                console.log("currentDateStr:" + currentDateStr);
 
                 //分页初始化
                 $('#page').NextPage({
@@ -127,36 +107,45 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 initEvt: function () {
                     console.log('mounted')
                 },
-                doQuery: function () {
-                    console.log("点击了查询按钮,order.id:" + order.id);
-                    ajax.post(ajax.queryOrderCancel, {}, function (res) {
-                        console.log(res.length);
-                    });
+                //编辑
+                updateOperationFlag :function (flag) {
+                    flagCollect.operationFlag =flag
                 },
-                dbClickView:function (event) {
-                    //双击查看行数据明细
-                    console.log("你双击的行数据");
-                    // kayak.router.go('#index/xxx/xxx:id=1&code=2')
-                    kayak.router.go('#full/purchase/purchaseView:classSelected=P02&statusSelected=save&operationFlag=1')
-                },
-                testClick:function (event) {
-                    console.log("order.urgenFlag:"+order.urgenFlag);
-                    console.log("this.order.goodsDateEnd :"+this.order.goodsDateEnd );
+                //新增采购订单,或者采购退单
+                createOrder:function (obj) {
+
+                }
+
+            },
+            computed: {
+                //1:采购订单显示;2:采购退单显示
+                orderTableFlag: function () {
+                    //采购订单,和采购退单的table列表切换
+                    //        orderTableFlag: 1,//1:采购订单显示;2:采购退单显示
+                    if (this.rowData.classSelected === "P01") {
+                        return 1;
+                    } else if (this.rowData.classSelected === "P02") {
+                        return 1;
+                    } else if (this.rowData.classSelected === "P03") {
+                        return 2;
+                    } else if (this.rowData.classSelected === "P04") {
+                        return 2;
+                    } else if (this.rowData.classSelected === "P05") {
+                        //TODO 待反馈确认业务细节
+                        return 1;
+                    } else if (this.rowData.classSelected === "P06") {
+                        //订单业务,同采购订单
+                        return 1;
+                    }else {
+                        //实际生产,不应该走到这个逻辑,这里是本地测试才会用到的条件分支
+                        return 1;
+                    }
                 }
             }
 
         }
     });
     handle = {};
-    _fn = {
-        handleRowParam : function () {
-            let obj = {};
-            obj['classSelected'] = 'P01';
-            obj['statusSelected'] = 'save';
-
-            obj['operation'] = 'look';//查看,更新的操作标记
-            //        operationFlag: 1,//1:查看; 2:修改
-        }
-    };
+    _fn = {};
     return page;
 });
