@@ -13,11 +13,10 @@
 
             <div class="stage-search">
                 <button class="btn btn-outline J_query_btn" v-on:click="updateOperationFlag(2)">编辑</button>
-                <button class="btn btn-outline J_create_btn" v-on:click="updateOperationFlag(2)">新增</button>
-                <button class="btn btn-outline J_audit_btn">审核</button>
-                <button class="btn btn-outline J_delete_btn" v-show="flagCollect.operationFlag==2">保存</button>
-                <button class="btn btn-primary J_delete_btn">返回</button>
-
+                <button class="btn btn-outline J_create_btn" v-on:click="createOrder($event)">新增</button>
+                <!--<button class="btn btn-outline J_audit_btn" v-on:click="audit($event)">审核</button>-->
+                <button class="btn btn-outline J_delete_btn" v-on:click="save($event)">保存</button>
+                <button class="btn btn-primary J_delete_btn" v-on:click="reback($event)">返回</button>
             </div>
 
             <!--表单内容-->
@@ -127,7 +126,8 @@
                         <td><span class="event">1</span></td>
                         <td>
                             <div><input class="form-control" value="商品编号1"
-                                        v-bind:disabled="flagCollect.operationFlag!=2"></div>
+                                        v-bind:disabled="flagCollect.operationFlag!=2"
+                                        v-on:change="changeSaveFlag"></div>
                         </td>
                         <td>
                             <div>商品名称1</div>
@@ -137,7 +137,8 @@
                         </td>
                         <td>
                             <div><input class="form-control" value="12.45"
-                                        v-bind:disabled="flagCollect.operationFlag!=2"></div>
+                                        v-bind:disabled="flagCollect.operationFlag!=2"
+                                        v-on:change="changeSaveFlag"></div>
                         </td>
                         <td>
                             <div>SK（库存单位）</div>
@@ -176,7 +177,8 @@
                         <td><span class="event">2</span></td>
                         <td>
                             <div><input class="form-control" value="商品编号1"
-                                        v-bind:disabled="flagCollect.operationFlag!=2"></div>
+                                        v-bind:disabled="flagCollect.operationFlag!=2"
+                                        v-on:change="changeSaveFlag"></div>
                         </td>
                         <td>
                             <div>商品名称2</div>
@@ -186,7 +188,8 @@
                         </td>
                         <td>
                             <div><input class="form-control" value="12.45"
-                                        v-bind:disabled="flagCollect.operationFlag!=2"></div>
+                                        v-bind:disabled="flagCollect.operationFlag!=2"
+                                        v-on:change="changeSaveFlag"></div>
                         </td>
                         <td>
                             <div>SK（库存单位）</div>
@@ -303,7 +306,8 @@
                         <td><span class="event">1</span></td>
                         <td>
                             <div><input class="form-control" value="商品编号1"
-                                        v-bind:disabled="flagCollect.operationFlag!=2"></div>
+                                        v-bind:disabled="flagCollect.operationFlag!=2"
+                                        v-on:change="changeSaveFlag"></div>
                         </td>
                         <td>
                             <div>商品名称1</div>
@@ -313,7 +317,8 @@
                         </td>
                         <td>
                             <div><input class="form-control" value="12.45"
-                                        v-bind:disabled="flagCollect.operationFlag!=2"></div>
+                                        v-bind:disabled="flagCollect.operationFlag!=2"
+                                        v-on:change="changeSaveFlag"></div>
                         </td>
                         <td>
                             <div>SK（库存单位）</div>
@@ -351,7 +356,8 @@
                         <td><span class="event">2</span></td>
                         <td>
                             <div><input class="form-control" value="商品编号1"
-                                        v-bind:disabled="flagCollect.operationFlag!=2"></div>
+                                        v-bind:disabled="flagCollect.operationFlag!=2"
+                                        v-on:change="changeSaveFlag"></div>
                         </td>
                         <td>
                             <div>商品名称2</div>
@@ -361,7 +367,8 @@
                         </td>
                         <td>
                             <div><input class="form-control" value="12.45"
-                                        v-bind:disabled="flagCollect.operationFlag!=2"></div>
+                                        v-bind:disabled="flagCollect.operationFlag!=2"
+                                        v-on:change="changeSaveFlag"></div>
                         </td>
                         <td>
                             <div>SK（库存单位）</div>

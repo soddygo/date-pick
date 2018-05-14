@@ -35,8 +35,8 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
         {key: "P02", value: "配送采购订单"},
         {key: "P03", value: "供应商采购退单"},
         {key: "P04", value: "配送采购退单"},
-        {key: "P05", value: "门店间调拨单"},
-        {key: "P06", value: "大宗采购订单"},
+        // {key: "P05", value: "门店间调拨单"},
+        // {key: "P06", value: "大宗采购订单"},
     ];
     //订单状态
     let orderStatus = [

@@ -11,8 +11,9 @@
             </div>
 
             <div class="stage-search">
-                <button class="btn btn-outline J_delete_btn">保存</button>
-                <button class="btn btn-primary J_delete_btn">返回</button>
+                <button class="btn btn-outline J_delete_btn" v-on:click="createOrder($event)">新增</button>
+                <button class="btn btn-outline J_delete_btn" v-on:click="save($event)">保存</button>
+                <button class="btn btn-primary J_delete_btn" v-on:click="reback($event)">返回</button>
 
             </div>
 
@@ -23,7 +24,7 @@
                         <label class="control-label"><span class="font-error"></span>订单类型</label>
                         <div class="base-form-content clearfix">
                             <select type="text" class="form-control" placeholder="请选择订单类型"
-                                    v-model="rowData.classSelected">
+                                    v-model="orderData.classSelected">
                                 <option v-for="option in orderClass" v-bind:value="option.key">{{option.value}}</option>
                             </select>
                         </div>
@@ -38,7 +39,7 @@
                         <label class="control-label"><span class="font-error"></span>订单状态</label>
                         <div class="base-form-content clearfix">
                             <select type="text" class="form-control" placeholder="请选择订单状态"
-                                    v-model="rowData.statusSelected">
+                                    v-model="orderData.statusSelected">
                                 <option v-for="option in orderStatus" v-bind:value="option.key">{{option.value}}
                                 </option>
                             </select>
@@ -212,52 +213,49 @@
                             <div><span class="event">查看详情</span></div>
                         </td>
                     </tr>
-
-                    <template v-for="item in items">
+                    <template v-for="item in rowData">
                         <tr>
                             <td><span class="event">2</span></td>
                             <td>
-                                <div><input class="form-control" value="商品编号1"
-                                            v-bind:disabled="flagCollect.operationFlag!=2"></div>
+                                <div><input class="form-control" value="" placeholder="请输入商品编号" v-on:change="addRow"></div>
                             </td>
                             <td>
-                                <div>商品名称2</div>
+                                <div>template</div>
                             </td>
                             <td>
-                                <div>订购包装2</div>
+                                <div></div>
                             </td>
                             <td>
-                                <div><input class="form-control" value="12.45"
-                                            v-bind:disabled="flagCollect.operationFlag!=2"></div>
+                                <div><input class="form-control" value="" placeholder="支持小数点2位"></div>
                             </td>
                             <td>
-                                <div>SK（库存单位）</div>
+                                <div></div>
                             </td>
                             <td>
-                                <div>10（库存单位数量）</div>
+                                <div></div>
                             </td>
                             <td>
                                 <div><input type="checkbox" disabled>
                                     <label>赠品</label></div>
                             </td>
                             <td>
-                                <div>11.05%</div>
+                                <div></div>
                             </td>
                             <td>
-                                <div>21333</div>
+                                <div></div>
                             </td>
                             <td>
-                                <div>1235452324</div>
+                                <div></div>
                             </td>
                             <td>
-                                <div>3542343423</div>
+                                <div></div>
                             </td>
                             <td>
                                 <div><input type="checkbox" disabled>
                                     <label>允许超收</label></div>
                             </td>
                             <td>
-                                <div>23.05%</div>
+                                <div></div>
                             </td>
                             <td>
                                 <div><span class="event">查看详情</span></div>

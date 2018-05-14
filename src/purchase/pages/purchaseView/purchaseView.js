@@ -1,6 +1,8 @@
 define('purchase/pages/purchaseView/purchaseView', function (require, exports, module) {
     /*cabin插件工具*/
 
+    MINIPOP = require('cabin/widgets/minipop/minipop');
+
     // cabin.widgets.loading
     // cabin.widgets.minipop
     // cabin.widgets.pop
@@ -15,8 +17,8 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
         {key: "P02", value: "配送采购订单"},
         {key: "P03", value: "供应商采购退单"},
         {key: "P04", value: "配送采购退单"},
-        {key: "P05", value: "门店间调拨单"},
-        {key: "P06", value: "大宗采购订单"},
+        // {key: "P05", value: "门店间调拨单"},
+        // {key: "P06", value: "大宗采购订单"},
     ];
     //订单状态
     let orderStatus = [
@@ -88,7 +90,7 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     totalCount: 200, //总条数
                     pageRange: 9, //间隔多少个
                     select: [30, 60, 100], //下拉选项
-                    showTotal:false,//显示总条数 boolean
+                    showTotal: false,//显示总条数 boolean
                     position: null, //位置 left right center
                     callback: function (data) {
                     }
@@ -108,12 +110,37 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     console.log('mounted')
                 },
                 //编辑
-                updateOperationFlag :function (flag) {
-                    flagCollect.operationFlag =flag
+                updateOperationFlag: function (flag) {
+                    flagCollect.operationFlag = flag
                 },
                 //新增采购订单,或者采购退单
-                createOrder:function (obj) {
-
+                createOrder: function (event) {
+                    if (flagCollect.hasSaveFlag === 2) {
+                        //有未保存的数据
+                        _fn.exitCurrentPage("当前界面信息未保存,是否继续新增订单?")
+                    } else {
+                        //跳转到新增采购订单界面,订单类型,以当前页面中选择的订单类型为准
+                        kayak.router.go('#full/purchase/purchaseMain:classSelected=' + this.rowData.classSelected)
+                    }
+                },
+                //保存订单修改
+                save: function (event) {
+                    //todo
+                },
+                //返回操作
+                reback: function (event) {
+                    if (flagCollect.hasSaveFlag === 2) {
+                        //有未保存的数据
+                        _fn.exitCurrentPage("当前界面信息未保存,是否放弃并返回?")
+                    } else {
+                        kayak.router.go('#full/purchase/purchaseMain:classSelected=' + this.rowData.classSelected)
+                    }
+                },
+                audit: function (event) {
+                    //TODO
+                },
+                changeSaveFlag: function (event) {
+                    flagCollect.hasSaveFlag = 2;//存在未保存数据
                 }
 
             },
@@ -131,12 +158,12 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     } else if (this.rowData.classSelected === "P04") {
                         return 2;
                     } else if (this.rowData.classSelected === "P05") {
-                        //TODO 待反馈确认业务细节
-                        return 1;
+                        //第一期无此业务
+                        return 0;
                     } else if (this.rowData.classSelected === "P06") {
-                        //订单业务,同采购订单
-                        return 1;
-                    }else {
+                        //走其他系统处理,不走此系统
+                        return 0;
+                    } else {
                         //实际生产,不应该走到这个逻辑,这里是本地测试才会用到的条件分支
                         return 1;
                     }
@@ -146,6 +173,25 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
         }
     });
     handle = {};
-    _fn = {};
+    _fn = {
+        //存在未修改数据,离开当前页面信息提示
+        exitCurrentPage: function (msg) {
+            MINIPOP.show({
+                title: '警告',
+                msg: msg,
+                ok: '确认',
+                cancel: '取消',
+                sort: 'right', //left(默认为left):cancel按钮在左，ok按钮在右,right:cancel按钮在右，ok按钮在左
+                callback: function (el, type) {
+                    if (type === 'ok') {
+                        kayak.router.go('#full/purchase/purchaseMain:classSelected=all')
+                    } else if (type === 'cancel') {
+                        //无操作,停留当前界面
+                    }
+                }
+            });
+        }
+
+    };
     return page;
 });

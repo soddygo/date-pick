@@ -15,8 +15,8 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
         {key: "P02", value: "配送采购订单"},
         {key: "P03", value: "供应商采购退单"},
         {key: "P04", value: "配送采购退单"},
-        {key: "P05", value: "门店间调拨单"},
-        {key: "P06", value: "大宗采购订单"},
+        // {key: "P05", value: "门店间调拨单"},
+        // {key: "P06", value: "大宗采购订单"},
     ];
     //订单状态
     let orderStatus = [
@@ -34,11 +34,23 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
     };
     //行数据信息
     //TODO 初始化数据,后面要修改,这里是便于测试用
-    let rowData = {
+    let orderData = {
         classSelected: "P01",
         statusSelected: "save",
 
     };
+    //订单下面的,商品明细
+    let rowData = [{}];
+    //商品明细-采购订单
+    let defaultRowDataInfo = {
+        //todo
+    };
+    //商品明细-采购退单
+    let defualtRowDataCancelInfo={
+        //todo
+    };
+
+
     page = Page({
         nodeClass: 'purchase-pages-purchaseCreate',
         parentClass: 'J_Main', // 没有就直接插入body，或者不插入
@@ -49,9 +61,10 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
             //使用vue 后可以不使用page 的show hide 方法,建议使用vue 自己的 mounted 取代show方法 destroy 取代hide 方法
             el: '#purchase-pages-purchaseCreate',
             //这里必须 使用一个方法返回给data
-            data:function () {
+            data: function () {
                 return {
-                    rowData: rowData,
+                    orderData: orderData,
+                    rowData:rowData,
                     flagCollect: flagCollect,
                     orderClass: orderClass,
                     orderStatus: orderStatus,
@@ -61,7 +74,7 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                 //进入页面
                 //cabinVue 里面所有的this 都指向当前这个vue 实例
                 //vue 更多使用方法请查看vue官方文档
-                this.$nextTick(function(){
+                this.$nextTick(function () {
                     //nextTick 用于当data数据改变,触发vue 渲染,且渲染完毕使用
 
                 });
@@ -74,14 +87,14 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                     totalCount: 200, //总条数
                     pageRange: 9, //间隔多少个
                     select: [30, 60, 100], //下拉选项
-                    showTotal:false,//显示总条数 boolean
+                    showTotal: false,//显示总条数 boolean
                     position: null, //位置 left right center
                     callback: function (data) {
                     }
                 });
             },
             //如果 不需要保存页面状态必须添加下面这个方法
-            beforeDestroy:function () {
+            beforeDestroy: function () {
                 Object.assign(this.$data, this.$options.data());
             },
             destroyed: function () {
@@ -91,11 +104,57 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                 //自定义方法
                 initEvt: function () {
                     console.log('mounted')
+                },
+                //新增采购订单,或者采购退单
+                createOrder: function (event) {
+                    if (flagCollect.hasSaveFlag === 2) {
+                        //有未保存的数据
+                        _fn.exitCurrentPage("当前界面信息未保存,是否继续新增订单?")
+                    } else {
+                        //跳转到新增采购订单界面,订单类型,以当前页面中选择的订单类型为准
+                        kayak.router.go('#full/purchase/purchaseMain:classSelected=' + this.rowData.classSelected)
+                    }
+                },
+                //保存订单修改
+                save: function (event) {
+                    //todo
+                },
+                //返回操作
+                reback: function (event) {
+                    if (flagCollect.hasSaveFlag === 2) {
+                        //有未保存的数据
+                        _fn.exitCurrentPage("当前界面信息未保存,是否放弃并返回?")
+                    } else {
+                        kayak.router.go('#full/purchase/purchaseMain:classSelected=' + this.rowData.classSelected)
+                    }
+                },
+                //增加新的空白行
+                addRow:function (event) {
+                    //todo
+                    rowData.push({});//添加空白数据
                 }
             }
         }
     });
     handle = {};
-    _fn = {};
+    _fn = {
+        //存在未修改数据,离开当前页面信息提示
+        exitCurrentPage: function (msg) {
+            MINIPOP.show({
+                title: '警告',
+                msg: msg,
+                ok: '确认',
+                cancel: '取消',
+                sort: 'right', //left(默认为left):cancel按钮在左，ok按钮在右,right:cancel按钮在右，ok按钮在左
+                callback: function (el, type) {
+                    if (type === 'ok') {
+                        kayak.router.go('#full/purchase/purchaseMain:classSelected=all')
+                    } else if (type === 'cancel') {
+                        //无操作,停留当前界面
+                    }
+                }
+            });
+        }
+    };
     return page;
 });
