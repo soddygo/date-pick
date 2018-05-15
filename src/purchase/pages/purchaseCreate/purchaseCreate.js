@@ -199,7 +199,7 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                         _fn.exitCurrentPage("当前界面信息未保存,是否继续新增订单?")
                     } else {
                         //跳转到新增采购订单界面,订单类型,以当前页面中选择的订单类型为准
-                        kayak.router.go('#full/purchase/purchaseMain:classSelected=' + this.rowData.classSelected)
+                        kayak.router.go('#full/purchase/purchaseCreate:classSelected=' + this.rowData.classSelected)
                     }
                 },
                 //保存订单修改

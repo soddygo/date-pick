@@ -12,10 +12,14 @@
             </div>
 
             <div class="stage-search">
-                <button class="btn btn-outline J_query_btn" v-on:click="updateOperationFlag(2)" v-bind:disabled="buttonUpdateFlag">编辑</button>
+                <button class="btn btn-outline J_query_btn" v-on:click="updateOperationFlag(2)"
+                        v-bind:disabled="!buttonUpdateFlag">编辑
+                </button>
                 <button class="btn btn-outline J_create_btn" v-on:click="createOrder($event)">新增</button>
                 <!--<button class="btn btn-outline J_audit_btn" v-on:click="audit($event)">审核</button>-->
-                <button class="btn btn-outline J_delete_btn" v-on:click="save($event)">保存</button>
+                <button class="btn btn-outline J_delete_btn" v-on:click="save($event)"
+                        v-bind:disabled="!buttonUpdateFlag">保存
+                </button>
                 <button class="btn btn-primary J_delete_btn" v-on:click="reback($event)">返回</button>
             </div>
 
@@ -137,17 +141,19 @@
                         <th style="min-width: 80px;">含税退货价(￥)</th>
                         <th>含税退货金额(￥)</th>
                         <th>退货原因</th>
-                        <th style="width: 100px;" v-show="flagCollect.operationFlag == 2">操作</th>
+                        <th style="width: 100px;" v-show="dataUpdateFlag">操作</th>
                     </tr>
                     </thead>
                     <tbody>
                     <template v-for="(item,index) in rowData">
                         <!--订购-start-->
-                        <tr v-show="orderTableFlag == 1" >
+                        <tr v-show="orderTableFlag == 1">
                             <td><span class="event">2</span></td>
                             <td>
                                 <div><input class="form-control" value="" placeholder="请输入商品编号" v-on:change="addRow"
-                                            v-model="item.goods_serial_number" v-bind:disabled="buttonUpdateFlag"></div>
+                                            v-model="item.goods_serial_number"
+                                            v-bind:disabled="!dataUpdateFlag">
+                                </div>
                             </td>
                             <td>
                                 <div>{{item.goods_name}}</div>
@@ -158,7 +164,9 @@
                             <td>
                                 <div><input type="number" step="0.01" class="form-control" value=""
                                             placeholder="支持小数点2位"
-                                            v-model="item.order_number" v-bind:disabled="buttonUpdateFlag"></div>
+                                            v-model="item.order_number"
+                                            v-bind:disabled="!dataUpdateFlag">
+                                </div>
                             </td>
                             <td>
                                 <div>{{item.repertory_unit}}</div>
@@ -191,17 +199,19 @@
                             </td>
                             <td v-show="flagCollect.operationFlag == 2">
                                 <div><span class="event" v-on:click="deleteRow($event,index)"
-                                           v-if="rowData.length !== index + 1 &&  flagCollect.operationFlag === 2">删除</span>
+                                           v-if="rowData.length !== index + 1 &&  dataUpdateFlag">删除</span>
                                 </div>
                             </td>
                         </tr>
                         <!--订购-end-->
                         <!--退订-start-->
-                        <tr v-show="orderTableFlag == 2" >
+                        <tr v-show="orderTableFlag == 2">
                             <td><span class="event">2</span></td>
                             <td>
                                 <div><input class="form-control" value="" placeholder="请输入商品编号" v-on:change="addRow"
-                                            v-model="item.goods_serial_number" v-bind:disabled="buttonUpdateFlag"></div>
+                                            v-model="item.goods_serial_number"
+                                            v-bind:disabled="!dataUpdateFlag">
+                                </div>
                             </td>
                             <td>
                                 <div>{{item.goods_name}}</div>
@@ -212,7 +222,9 @@
                             <td>
                                 <div><input type="number" step="0.01" class="form-control" value=""
                                             placeholder="支持小数点2位"
-                                            v-model="item.order_number" v-bind:disabled="buttonUpdateFlag"></div>
+                                            v-model="item.order_number"
+                                            v-bind:disabled="!dataUpdateFlag">
+                                </div>
                             </td>
                             <td>
                                 <div>{{item.repertory_unit}}</div>
@@ -245,7 +257,7 @@
                             </td>
                             <td v-show="flagCollect.operationFlag == 2">
                                 <div><span class="event" v-on:click="deleteRow($event,index)"
-                                           v-if="rowData.length !== index + 1 &&  flagCollect.operationFlag === 2">删除</span>
+                                           v-if="rowData.length !== index + 1 &&  dataUpdateFlag">删除</span>
                                 </div>
                             </td>
                         </tr>

@@ -266,7 +266,11 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     // {key: "audit", value: "已审核"},
                     // {key: "complete", value: "已完成"},
                     // {key: "close", value: "已关闭"},
-                    return this.orderData.statusSelected !== "save";
+                    return this.orderData.statusSelected === "save";
+                },
+                //数据是否可以编辑标记
+                dataUpdateFlag:function () {
+                    return this.orderData.statusSelected === "save" && flagCollect.operationFlag === 2;
                 }
             }
 
