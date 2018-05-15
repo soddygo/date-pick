@@ -12,6 +12,9 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
     require('cabin/lib/daterangepicker/moment.js');
     require('cabin/widgets/pddatepicker/pddatepicker.js');
 
+    MINIPOP = require('cabin/widgets/minipop/minipop');
+
+
     var handle, _fn, page;
     //object construct
     let order = {
@@ -53,6 +56,12 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
         {key: "2", value: "ERP同步"},
     ];
 
+    //订单明细
+    let orderRow = [];
+
+    //订单明细被选中的行
+    let currentCheckedFlag = false;
+    let orderRowChecked = [];
 
     page = Page({
         nodeClass: 'purchase-pages-purchaseMain',
@@ -69,6 +78,9 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
 
                 return {
                     order: order,
+                    orderRow: orderRow,
+                    orderRowChecked: orderRowChecked,
+                    currentCheckedFlag: currentCheckedFlag,
                     orderClass: orderClass,
                     orderStatus: orderStatus,
                     orderSource: orderSource,
@@ -86,15 +98,26 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 //init datePick
                 //current date
                 let currentDateStr = moment().format('YYYY-MM-DD');
-                console.log("currentDateStr:"+currentDateStr);
-                $('.icondate').PdDatePicker({
+                console.log("currentDateStr:" + currentDateStr);
+                $('#goodsDateStart').PdDatePicker({
                     startView: 2,
                     minView: 3,
-                    initDate:currentDateStr,
+                    initDate: currentDateStr,
                     format: 'YYYY-MM-DD',
                     //containerId: 'abc'
                 }).on('change', function (evt, data) {
-                    console.log(data)
+                    let date = moment(data).format('YYYY-MM-DD');
+                    order.goodsDateStart = date;
+                });
+                $('#goodsDateEnd').PdDatePicker({
+                    startView: 2,
+                    minView: 3,
+                    initDate: currentDateStr,
+                    format: 'YYYY-MM-DD',
+                    //containerId: 'abc'
+                }).on('change', function (evt, data) {
+                    let date = moment(data).format('YYYY-MM-DD');
+                    order.goodsDateEnd = date;
                 });
 
                 this.order.goodsDateStart = currentDateStr;
@@ -108,11 +131,47 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                     totalCount: 200, //总条数
                     pageRange: 9, //间隔多少个
                     select: [30, 60, 100], //下拉选项
-                    showTotal:false,//显示总条数 boolean
+                    showTotal: false,//显示总条数 boolean
                     position: null, //位置 left right center
                     callback: function (data) {
                     }
                 });
+
+                //订单明细,添加测试数据
+                let temp1 = {
+                    order_class: "P01",//'订单类型',
+                    order_class_name: "供应商采购订单",//'订单类型中文名称',
+                    order_id: "2222",//'订单编号，编号生成逻辑： PO+年月日+店号+流水号4位',
+                    order_status: "已保存",//'订单状态',
+                    supplier_bh: "供应商编号11",//'供应商编号',
+                    supplier_name: "供应商名称11",//'供应商名称',
+                    order_goods_address: "test",//'订货地点',
+                    order_goods_date: "2018-05-01",//'订货日期',
+                    urgen_flag: false,//'加急订单标记',
+                    predict_date: "2018-05-05",//'预计到货日期',
+                    erp_serial_number: "111",//'ERP编号',
+                    marketing_serial_number: "1111",//'采销平台编号',
+                    order_source: "手工创建",//'订单来源',
+                    tax_included_amount: 100,// '含税金额',
+                };
+                let temp2 = {
+                    order_class: "P01",//'订单类型',
+                    order_class_name: "供应商采购订单",//'订单类型中文名称',
+                    order_id: "1111",//'订单编号，编号生成逻辑： PO+年月日+店号+流水号4位',
+                    order_status: "已保存",//'订单状态',
+                    supplier_bh: "供应商编号11",//'供应商编号',
+                    supplier_name: "供应商名称11",//'供应商名称',
+                    order_goods_address: "test",//'订货地点',
+                    order_goods_date: "2018-05-01",//'订货日期',
+                    urgen_flag: true,//'加急订单标记',
+                    predict_date: "2018-05-05",//'预计到货日期',
+                    erp_serial_number: "111",//'ERP编号',
+                    marketing_serial_number: "1111",//'采销平台编号',
+                    order_source: "手工创建",//'订单来源',
+                    tax_included_amount: 100,// '含税金额',
+                };
+                orderRow.push(temp1);
+                orderRow.push(temp2);
 
             },
             //如果 不需要保存页面状态必须添加下面这个方法
@@ -133,30 +192,87 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                         console.log(res.length);
                     });
                 },
-                dbClickView:function (event) {
+                //双击查看详情
+                dbClickView: function (event, orderId) {
                     //双击查看行数据明细
-                    console.log("你双击的行数据");
                     // kayak.router.go('#index/xxx/xxx:id=1&code=2')
-                    kayak.router.go('#full/purchase/purchaseView:classSelected=P02&statusSelected=save&operationFlag=1')
+                    kayak.router.go("#full/purchase/purchaseView:classSelected=" + order.classSelected
+                        + "&statusSelected=" + order.statusSelected + "&operationFlag=1"
+                        + "&orderId=" + orderId);
                 },
-                testClick:function (event) {
-                    console.log("order.urgenFlag:"+order.urgenFlag);
-                    console.log("this.order.goodsDateEnd :"+this.order.goodsDateEnd );
+                testClick: function (event) {
+                    console.log("order.urgenFlag:" + order.urgenFlag);
+                    console.log("this.order.goodsDateEnd :" + this.order.goodsDateEnd);
+                },
+                //新增采购订单,或者采购退单
+                createOrder: function (event) {
+                    //主界面,不需要验证是否有数据未保存
+                    kayak.router.go('#full/purchase/purchaseCreate:classSelected=' + this.order.classSelected)
+                },
+                //删除订单
+                deleteRow: function (event) {
+                    let tempOrderRowChecked = this.orderRowChecked;
+                    if (tempOrderRowChecked.length === 0) {
+                        //没有选中的选项,禁止操作删除按钮
+                    } else {
+                        //1.弹窗确认
+                        MINIPOP.show({
+                            title: '警告',
+                            msg: "是否确认删除!",
+                            ok: '确认',
+                            cancel: '取消',
+                            sort: 'right', //left(默认为left):cancel按钮在左，ok按钮在右,right:cancel按钮在右，ok按钮在左
+                            callback: function (el, type) {
+                                if (type === 'ok') {
+                                    //todo 删除订单数据
+                                    //1. 删除前端数据
+                                    for (_index in tempOrderRowChecked) {
+                                        let _orderId = tempOrderRowChecked[_index];
+                                        for (_rowIndex in orderRow) {
+                                            let rowItem = orderRow[_rowIndex];
+                                            if (_orderId === rowItem.order_id) {
+                                                orderRow.splice(_rowIndex, 1);
+                                            }
+                                        }
+                                    }
+                                    //2. 调用后端数据
+                                } else if (type === 'cancel') {
+                                    //无操作,停留当前界面
+                                }
+                            }
+                        });
+                    }
+                },
+                //选中当前页所有行数据
+                checkedAll: function (event) {
+                    if (this.currentCheckedFlag) {
+                        //全不选逻辑
+                        this.orderRowChecked.splice(0, this.orderRowChecked.length);
+                    } else {
+                        this.orderRowChecked.splice(0, this.orderRowChecked.length);
+                        for (_index in orderRow) {
+                            let item = orderRow[_index];
+                            this.orderRowChecked.push(item.order_id);
+                        }
+                    }
+                }
+            },
+            computed: {
+                //删除按钮的禁用标记,true:禁用,false:按钮可用
+                deleteButtonFlag: function () {
+                    return this.orderRowChecked.length === 0;
+                },
+                auditButtonFlag: function () {
+                    return this.orderRowChecked.length === 0;
+                },
+                lookButtonFlag: function () {
+                    return this.orderRowChecked.length === 0 || this.orderRowChecked.length > 1;
                 }
             }
 
         }
     });
     handle = {};
-    _fn = {
-        handleRowParam : function () {
-            let obj = {};
-            obj['classSelected'] = 'P01';
-            obj['statusSelected'] = 'save';
-
-            obj['operation'] = 'look';//查看,更新的操作标记
-            //        operationFlag: 1,//1:查看; 2:修改
-        }
-    };
+    _fn = {};
     return page;
 });

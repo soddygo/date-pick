@@ -36,11 +36,26 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
     };
     //行数据信息
     //TODO 初始化数据,后面要修改,这里是便于测试用
-    let rowData = {
+    let orderData = {
         classSelected: "P01",
-        statusSelected: "save",
+        statusSelected: "save",//"订单状态"
+
+        order_class: "",//'订单类型',
+        order_class_name: "",//ent '订单类型中文名称',
+        order_id: "1111",//ent '订单编号，编号生成逻辑： PO+年月日+店号+流水号4位',
+
+        supplier_bh: "11111",// '供应商编号',
+        supplier_name: "test测试",//'供应商名称',
+        order_goods_address: "test",//'订货地点',
+        order_goods_date: "",// '订货日期',
+        urgen_flag: false,//'加急订单标记',
+        predict_date: "",// '预计到货日期',
+
 
     };
+    //订单下面的,商品明细
+    let rowData = [];//新增的商品明细
+    let originRowData = [];//原本的商品明细,不允许删除,只能修改商品编号和数量
     //采购订单明细
     page = Page({
         nodeClass: 'purchase-pages-purchaseView',
@@ -57,6 +72,7 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
 
                 return {
                     rowData: rowData,
+                    orderData: orderData,
                     flagCollect: flagCollect,
                     orderClass: orderClass,
                     orderStatus: orderStatus,
@@ -73,10 +89,12 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
 
                 //获取入参
                 let params = kayak.router.requestParam;
-                rowData = $.extend(rowData, params);
-                flagCollect.operationFlag = params.operationFlag;//当前页面查看标记,只读,还是编辑模式
+                // flagCollect.operationFlag = params.operationFlag;//当前页面查看标记,只读,还是编辑模式
                 console.log("params:" + JSON.stringify(params));
-                console.log("flagCollect.operationFlag:" + JSON.stringify(flagCollect.operationFlag));
+                this.orderData.classSelected = params.classSelected;
+                this.orderData.statusSelected = params.statusSelected;
+                this.orderData.order_id = params.orderId;
+                //todo ajax根据订单id请求后台明细数据
 
                 //init datePick
                 //current date
@@ -96,6 +114,43 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     }
                 });
 
+
+                //商品明细,添加测试数据
+                let temp1 = {
+                    goods_serial_number: "商品编号1",//    '商品编号',
+                    goods_name: "商品名称1111",//    '商品名称',
+                    order_pack: "订购包装1",//    '订货包装',
+                    order_number: 12.01,//     '订货数量',
+                    repertory_unit: "KG",//    '库存单位',
+                    repertory_number: "11",//     '库存单位数量',
+                    gift: false,//    '赠品',
+                    tax_rate: "10.78%",//    '税率',
+                    tax_included_pay: "222",//    '含税进价',
+                    tax_included_amount: "11",//    '含税金额',
+                    goods_bar_code: "112",//    '商品条码',
+                    allow_excess: false,//    '允许超收标记',
+                    excess_ratio: "10%",//   '超收比例',
+                };
+                let temp2 = {
+                    goods_serial_number: "商品编号2",//    '商品编号',
+                    goods_name: "商品名称1111",//    '商品名称',
+                    order_pack: "订购包装1",//    '订货包装',
+                    order_number: 12.01,//     '订货数量',
+                    repertory_unit: "KG",//    '库存单位',
+                    repertory_number: "22",//     '库存单位数量',
+                    gift: false,//    '赠品',
+                    tax_rate: "10.34%",//    '税率',
+                    tax_included_pay: "123",//    '含税进价',
+                    tax_included_amount: "1123",//    '含税金额',
+                    goods_bar_code: "111",//    '商品条码',
+                    allow_excess: false,//    '允许超收标记',
+                    excess_ratio: "",//   '超收比例',
+                }
+                rowData.push(temp1);
+                rowData.push(temp2);
+                // // rowData 末尾空表航
+                // rowData.push({goods_serial_number: "", order_number: 0});
+
             },
             //如果 不需要保存页面状态必须添加下面这个方法
             beforeDestroy: function () {
@@ -111,7 +166,15 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                 },
                 //编辑
                 updateOperationFlag: function (flag) {
-                    flagCollect.operationFlag = flag
+                    flagCollect.operationFlag = flag;
+                    flagCollect.hasSaveFlag = 2;
+                    //判断是否已有最后一行空白行
+                    let temp = rowData[rowData.length - 1];
+                    if (temp && (typeof temp.goods_serial_number !== "undefined") && temp.goods_serial_number.length === 0) {
+                        //不需要增加新的空白,已有一个空白行了
+                    } else {
+                        rowData.push({goods_serial_number: "", order_number: 0});//添加空白数据
+                    }
                 },
                 //新增采购订单,或者采购退单
                 createOrder: function (event) {
@@ -120,7 +183,7 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                         _fn.exitCurrentPage("当前界面信息未保存,是否继续新增订单?")
                     } else {
                         //跳转到新增采购订单界面,订单类型,以当前页面中选择的订单类型为准
-                        kayak.router.go('#full/purchase/purchaseMain:classSelected=' + this.rowData.classSelected)
+                        kayak.router.go('#full/purchase/purchaseCreate:classSelected=' + this.orderData.classSelected)
                     }
                 },
                 //保存订单修改
@@ -133,14 +196,42 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                         //有未保存的数据
                         _fn.exitCurrentPage("当前界面信息未保存,是否放弃并返回?")
                     } else {
-                        kayak.router.go('#full/purchase/purchaseMain:classSelected=' + this.rowData.classSelected)
+                        kayak.router.go('#full/purchase/purchaseMain:classSelected=' + this.orderData.classSelected)
                     }
                 },
                 audit: function (event) {
                     //TODO
                 },
-                changeSaveFlag: function (event) {
-                    flagCollect.hasSaveFlag = 2;//存在未保存数据
+                //增加新的空白行
+                addRow: function (event) {
+                    //判断是否已有最后一行空白行
+                    let temp = rowData[rowData.length - 1];
+                    if (temp && (typeof temp.goods_serial_number !== "undefined") && temp.goods_serial_number.length === 0) {
+                        //不需要增加新的空白,已有一个空白行了
+                    } else {
+                        rowData.push({goods_serial_number: "", order_number: 0});//添加空白数据
+                    }
+                },
+                deleteRow: function (event, index) {
+                    if (rowData.length === 1) {
+                        //最小必须有一行明细数据,不能再少了
+                        MINIPOP.show({
+                            title: '消息',
+                            msg: '至少必须有一行明细数据,不能再少了',
+                            cancel: '我知道了'
+                        });
+                    } else if (rowData.length === index + 1) {
+                        //不允许删最后一行,因为最后一行是新增编辑用的
+                        MINIPOP.show({
+                            title: '消息',
+                            msg: '不允许删最后一行空白行,因为最后一行是新增编辑用的',
+                            cancel: '我知道了'
+                        });
+                    } else {
+                        //删除明细操作
+                        console.log("index:" + index);
+                        rowData.splice(index, 1);
+                    }
                 }
 
             },
@@ -149,24 +240,33 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                 orderTableFlag: function () {
                     //采购订单,和采购退单的table列表切换
                     //        orderTableFlag: 1,//1:采购订单显示;2:采购退单显示
-                    if (this.rowData.classSelected === "P01") {
+                    if (this.orderData.classSelected === "P01") {
                         return 1;
-                    } else if (this.rowData.classSelected === "P02") {
+                    } else if (this.orderData.classSelected === "P02") {
                         return 1;
-                    } else if (this.rowData.classSelected === "P03") {
+                    } else if (this.orderData.classSelected === "P03") {
                         return 2;
-                    } else if (this.rowData.classSelected === "P04") {
+                    } else if (this.orderData.classSelected === "P04") {
                         return 2;
-                    } else if (this.rowData.classSelected === "P05") {
+                    } else if (this.orderData.classSelected === "P05") {
                         //第一期无此业务
                         return 0;
-                    } else if (this.rowData.classSelected === "P06") {
+                    } else if (this.orderData.classSelected === "P06") {
                         //走其他系统处理,不走此系统
                         return 0;
                     } else {
                         //实际生产,不应该走到这个逻辑,这里是本地测试才会用到的条件分支
                         return 1;
                     }
+                },
+                //编辑按钮是否可用,false:编辑按钮可用
+                buttonUpdateFlag: function () {
+                    // {key: "all", value: "全部"},
+                    // {key: "save", value: "已保存"},
+                    // {key: "audit", value: "已审核"},
+                    // {key: "complete", value: "已完成"},
+                    // {key: "close", value: "已关闭"},
+                    return this.orderData.statusSelected !== "save";
                 }
             }
 

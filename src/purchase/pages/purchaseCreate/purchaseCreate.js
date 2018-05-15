@@ -7,6 +7,9 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
     // cabin.widgets.tips
     // cabin.tools.cookie
 
+    MINIPOP = require('cabin/widgets/minipop/minipop');
+
+
     var handle, _fn, page;
     //订单类型枚举
     let orderClass = [
@@ -29,25 +32,54 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
     //当前页面是否可以修改等标记
     let flagCollect = {
         operationFlag: 1,//1:查看; 2:修改
-        hasSaveFlag: 1,//1:已经保存;2:存在未保存数据
+        hasSaveFlag: 2,//1:已经保存;2:存在未保存数据
         // orderTableFlag: 1,//1:采购订单显示;2:采购退单显示
     };
     //行数据信息
     //TODO 初始化数据,后面要修改,这里是便于测试用
     let orderData = {
         classSelected: "P01",
-        statusSelected: "save",
+        statusSelected: "all",
+        supplier_bh: "11111",// '供应商编号',
+        supplier_name: "test测试",//'供应商名称',
+        order_goods_address: "test",//'订货地点',
+        order_goods_date: "",// '订货日期',
+        urgen_flag: false,//'加急订单标记',
+        predict_date: "",// '预计到货日期',
 
     };
     //订单下面的,商品明细
-    let rowData = [{}];
+    let rowData = [];
     //商品明细-采购订单
     let defaultRowDataInfo = {
-        //todo
+        goods_serial_number: "",//    '商品编号',
+        goods_name: "",//    '商品名称',
+        order_pack: "",//    '订货包装',
+        order_number: 0,//     '订货数量',
+        repertory_unit: "",//    '库存单位',
+        repertory_number: "",//     '库存单位数量',
+        gift: false,//    '赠品',
+        tax_rate: "",//    '税率',
+        tax_included_pay: "",//    '含税进价',
+        tax_included_amount: "",//    '含税金额',
+        goods_bar_code: "",//    '商品条码',
+        allow_excess: false,//    '允许超收标记',
+        excess_ratio: "",//   '超收比例',
     };
     //商品明细-采购退单
-    let defualtRowDataCancelInfo={
-        //todo
+    let defualtRowDataCancelInfo = {
+        goods_serial_number: "",// comment '商品编号',
+        goods_name: "",// comment '商品名称',
+        order_pack: "",// comment '订货包装',
+        order_number: 0,// comment '订货数量',
+        repertory_unit: "",// comment '库存单位',
+        repertory_number: "",// comment '库存单位数量',
+        gift: "",// comment '赠品',
+        tax_rate: "",// comment '税率',
+        tax_included_pay: "",// comment '含税进价',
+        tax_included_amount: "",// comment '含税退货金额',
+        cancel_reason_code: "",// comment '退货原因代码',
+        cancel_reason: "",// comment '退货原因',
     };
 
 
@@ -64,7 +96,7 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
             data: function () {
                 return {
                     orderData: orderData,
-                    rowData:rowData,
+                    rowData: rowData,
                     flagCollect: flagCollect,
                     orderClass: orderClass,
                     orderStatus: orderStatus,
@@ -79,6 +111,25 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
 
                 });
 
+                //获取入参
+                let params = kayak.router.requestParam;
+                console.log("params:" + JSON.stringify(params));
+                this.orderData.classSelected = params.classSelected;
+
+                //预计到货日期初始化
+                $('#predict_date_id').PdDatePicker({
+                    startView: 2,
+                    minView: 3,
+                    initDate: moment().format('YYYY-MM-DD'),
+                    format: 'YYYY-MM-DD',
+                    //containerId: 'abc'
+                }).on('change', function (evt, data) {
+                    let date = moment(data).format('YYYY-MM-DD');
+                    orderData.predict_date = date;
+                });
+
+                //初始化新增订单信息
+                orderData['order_goods_date'] = moment().format('YYYY-MM-DD');//订货日期,默认当前日期,不可修改
 
                 //分页初始化
                 $('#page').NextPage({
@@ -88,10 +139,46 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                     pageRange: 9, //间隔多少个
                     select: [30, 60, 100], //下拉选项
                     showTotal: false,//显示总条数 boolean
-                    position: null, //位置 left right center
+                    position: "right", //位置 left right center
                     callback: function (data) {
                     }
                 });
+
+                //商品明细,添加测试数据
+                let temp1 = {
+                    goods_serial_number: "商品编号1",//    '商品编号',
+                    goods_name: "商品名称1111",//    '商品名称',
+                    order_pack: "订购包装1",//    '订货包装',
+                    order_number: 12.01,//     '订货数量',
+                    repertory_unit: "KG",//    '库存单位',
+                    repertory_number: "11",//     '库存单位数量',
+                    gift: false,//    '赠品',
+                    tax_rate: "10.78%",//    '税率',
+                    tax_included_pay: "222",//    '含税进价',
+                    tax_included_amount: "11",//    '含税金额',
+                    goods_bar_code: "112",//    '商品条码',
+                    allow_excess: false,//    '允许超收标记',
+                    excess_ratio: "10%",//   '超收比例',
+                };
+                let temp2 = {
+                    goods_serial_number: "商品编号2",//    '商品编号',
+                    goods_name: "商品名称1111",//    '商品名称',
+                    order_pack: "订购包装1",//    '订货包装',
+                    order_number: 12.01,//     '订货数量',
+                    repertory_unit: "KG",//    '库存单位',
+                    repertory_number: "22",//     '库存单位数量',
+                    gift: false,//    '赠品',
+                    tax_rate: "10.34%",//    '税率',
+                    tax_included_pay: "123",//    '含税进价',
+                    tax_included_amount: "1123",//    '含税金额',
+                    goods_bar_code: "111",//    '商品条码',
+                    allow_excess: false,//    '允许超收标记',
+                    excess_ratio: "",//   '超收比例',
+                }
+                rowData.push(temp1);
+                rowData.push(temp2);
+                // rowData 末尾空表航
+                rowData.push({goods_serial_number: "", order_number: 0});
             },
             //如果 不需要保存页面状态必须添加下面这个方法
             beforeDestroy: function () {
@@ -118,6 +205,7 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                 //保存订单修改
                 save: function (event) {
                     //todo
+                    flagCollect.hasSaveFlag = 1
                 },
                 //返回操作
                 reback: function (event) {
@@ -129,9 +217,70 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                     }
                 },
                 //增加新的空白行
-                addRow:function (event) {
-                    //todo
-                    rowData.push({});//添加空白数据
+                addRow: function (event) {
+                    //判断是否已有最后一行空白行
+                    let temp = rowData[rowData.length - 1];
+                    if (temp && (typeof temp.goods_serial_number !== "undefined") && temp.goods_serial_number.length === 0) {
+                        //不需要增加新的空白,已有一个空白行了
+                    } else {
+                        //判断当前是订单,还退单
+                        if (orderData.classSelected === "P01" || orderData.classSelected === "P02") {
+                            //订单
+                            let blankObj = $.extend({}, defaultRowDataInfo);
+                            rowData.push(blankObj)
+                        } else if (orderData.classSelected === "P03" || orderData.classSelected === "P04") {
+                            //退单
+                            let blankObj = $.extend({}, defualtRowDataCancelInfo);
+                            rowData.push(blankObj)
+                        } else {
+                            rowData.push({goods_serial_number: "", order_number: 0});//添加空白数据
+                        }
+                    }
+                },
+                deleteRow: function (event, index) {
+                    if (rowData.length === 1) {
+                        //最小必须有一行明细数据,不能再少了
+                        MINIPOP.show({
+                            title: '消息',
+                            msg: '至少必须有一行明细数据,不能再少了',
+                            cancel: '我知道了'
+                        });
+                    } else if (rowData.length === index + 1) {
+                        //不允许删最后一行,因为最后一行是新增编辑用的
+                        MINIPOP.show({
+                            title: '消息',
+                            msg: '不允许删最后一行空白行,因为最后一行是新增编辑用的',
+                            cancel: '我知道了'
+                        });
+                    } else {
+                        //删除明细操作
+                        rowData.splice(index, 1);
+                    }
+                }
+            },
+            computed: {
+                //1:采购订单显示;2:采购退单显示
+                orderTableFlag: function () {
+                    //采购订单,和采购退单的table列表切换
+                    //        orderTableFlag: 1,//1:采购订单显示;2:采购退单显示
+                    if (this.orderData.classSelected === "P01") {
+                        return 1;
+                    } else if (this.orderData.classSelected === "P02") {
+                        return 1;
+                    } else if (this.orderData.classSelected === "P03") {
+                        return 2;
+                    } else if (this.orderData.classSelected === "P04") {
+                        return 2;
+                    } else if (this.orderData.classSelected === "P05") {
+                        //第一期无此业务
+                        return 0;
+                    } else if (this.orderData.classSelected === "P06") {
+                        //走其他系统处理,不走此系统
+                        return 0;
+                    } else {
+                        //实际生产,不应该走到这个逻辑,这里是本地测试才会用到的条件分支
+                        return 1;
+                    }
                 }
             }
         }

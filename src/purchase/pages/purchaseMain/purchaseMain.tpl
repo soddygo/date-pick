@@ -11,12 +11,12 @@
             </div>
 
             <div class="stage-search">
-                <button class="btn btn-outline J_search_btn">查询</button>
-                <button class="btn btn-outline J_create_btn">新增</button>
-                <button class="btn btn-outline J_query_btn">查看</button>
-                <button class="btn btn-outline J_update_btn">修改</button>
-                <button class="btn btn-outline J_delete_btn">删除</button>
-                <button class="btn btn-outline J_audit_btn">审核</button>
+                <!--<button class="btn btn-outline J_search_btn">查询</button>-->
+                <button class="btn btn-outline J_create_btn" v-on:click="createOrder">新增</button>
+                <button class="btn btn-outline J_query_btn" v-on:click="dbClickView" v-bind:disabled="lookButtonFlag">查看</button>
+                <!--<button class="btn btn-outline J_update_btn">修改</button>-->
+                <button class="btn btn-outline J_delete_btn" v-on:click="deleteRow" v-bind:disabled="deleteButtonFlag">删除</button>
+                <button class="btn btn-outline J_audit_btn"  v-bind:disabled="auditButtonFlag">审核</button>
             </div>
 
 
@@ -38,10 +38,12 @@
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订货日期</label>
                         <div class="base-form-content clearfix date-group-box">
-                            <input type="text" class="form-control icondate icontime " placeholder="选择开始时间"
+                            <input type="text" class="form-control icondate icontime " id="goodsDateStart"
+                                   placeholder="选择开始时间"
                                    v-model="order.goodsDateStart">
                             <label class="cabin-date-spin">至</label>
-                            <input type="text" class="form-control icondate icontime" placeholder="选择结束时间"
+                            <input type="text" class="form-control icondate icontime" id="goodsDateEnd"
+                                   placeholder="选择结束时间"
                                    v-model="order.goodsDateEnd">
                         </div>
                     </div>
@@ -104,7 +106,8 @@
                         <!--行模块：内容-->
                         <div class="base-form-content clearfix">
                             <div class="switch-inline">
-                                <input type="checkbox" id="switch_urgenFlag" v-model="order.urgenFlag" v-on:click="testClick">
+                                <input type="checkbox" id="switch_urgenFlag" v-model="order.urgenFlag"
+                                       v-on:click="testClick">
                                 <label for="switch_urgenFlag">
                                     <span>非加急订单</span>
                                     <span>加急订单</span>
@@ -132,13 +135,13 @@
             <div class="table-responsive">
                 <!--注:没标题没按钮组表格没上下边线 有标题加table-top-bordered有分页加table-bottom-bordered-->
                 <!--表格-->
-                <table class="cabinTable table table-hover  table-bottom-bordered table-event">
+                <table class="cabinTable table table-hover  table-bottom-bordered table-event ">
                     <thead>
                     <tr>
                         <th>
                             <div class="checkbox">
-                                <input type="checkbox">
-                                <label></label>
+                                <input type="checkbox" id="row_all" v-on:click="checkedAll" v-model="currentCheckedFlag">
+                                <label for="row_all"></label>
                             </div>
                         </th>
                         <th>订单编号</th>
@@ -154,84 +157,49 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-on:dblclick="dbClickView($event)">
-                        <td>
-                            <div class="checkbox">
-                                <input type="checkbox" >
-                                <label></label>
-                            </div>
-                        </td>
-                        <td>
-                            <div>1111</div>
-                        </td>
-                        <td>
-                            <div>采购订单</div>
-                        </td>
-                        <td>
-                            <div>test1</div>
-                        </td>
-                        <td>
-                            <div>1111.21</div>
-                        </td>
-                        <td>
-                            <div>2018-05-11</div>
-                        </td>
-                        <td>
-                            <div>2018-05-14</div>
-                        </td>
-                        <td>
-                            <div>test订单来源</div>
-                        </td>
-                        <td>
-                            <div><input type="checkbox">
-                                <label></label></div>
-                        </td>
-                        <td>
-                            <div>admin</div>
-                        </td>
-                        <td>
-                            <div>已审核</div>
-                        </td>
-                    </tr>
-                    <tr v-on:dblclick="dbClickView($event)">
-                        <td>
-                            <div class="checkbox">
-                                <input type="checkbox">
-                                <label ></label>
-                            </div>
-                        </td>
-                        <td>
-                            <div>2222</div>
-                        </td>
-                        <td>
-                            <div>采购订单</div>
-                        </td>
-                        <td>
-                            <div>test1</div>
-                        </td>
-                        <td>
-                            <div>1111.21</div>
-                        </td>
-                        <td>
-                            <div>2018-05-11</div>
-                        </td>
-                        <td>
-                            <div>2018-05-14</div>
-                        </td>
-                        <td>
-                            <div>test订单来源</div>
-                        </td>
-                        <td>
-                            <div><input type="checkbox">
-                                <label></label></div>
-                        </td>
-                        <td>
-                            <div>admin</div>
-                        </td>
-                        <td>
-                            <div>已审核</div>
-                        </td>
-                    </tr>
+                    <template v-for="(item,index) in orderRow">
+                        <tr v-on:dblclick="dbClickView($event,item.order_id)">
+                            <td>
+                                <div class="checkbox">
+                                    <input type="checkbox" v-bind:id="item.order_id" v-bind:value="item.order_id"
+                                           v-model="orderRowChecked">
+                                    <label v-bind:for="item.order_id"></label>
+                                </div>
+                            </td>
+                            <td>
+                                <div>{{item.order_id}}</div>
+                            </td>
+                            <td>
+                                <div>{{item.order_class_name}}</div>
+                            </td>
+                            <td>
+                                <div>{{item.supplier_name}}</div>
+                            </td>
+                            <td>
+                                <div>{{item.tax_included_amount}}</div>
+                            </td>
+                            <td>
+                                <div>{{item.order_goods_date}}</div>
+                            </td>
+                            <td>
+                                <div>{{item.predict_date}}</div>
+                            </td>
+                            <td>
+                                <div>{{item.order_source}}</div>
+                            </td>
+                            <td>
+                                <div class="checkbox"><input type="checkbox" v-bind:id="item.order_id + 2"
+                                                             v-model="item.urgen_flag">
+                                    <label v-bind:for="item.order_id + 2"></label></div>
+                            </td>
+                            <td>
+                                <div>admin</div>
+                            </td>
+                            <td>
+                                <div>已审核</div>
+                            </td>
+                        </tr>
+                    </template>
                     </tbody>
                 </table>
                 <!--表格 end-->
