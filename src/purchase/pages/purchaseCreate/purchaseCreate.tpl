@@ -82,8 +82,8 @@
                             <div class="switch-inline">
                                 <input type="checkbox" id="switch4" v-model="orderData.urgen_flag">
                                 <label for="switch4">
-                                    <span>非加急订单</span>
                                     <span>加急订单</span>
+                                    <span>非加急订单</span>
                                 </label>
                             </div>
                         </div>
@@ -142,7 +142,7 @@
                     <template v-for="(item,index) in rowData">
                         <!--订购-start-->
                         <tr v-show="orderTableFlag == 1">
-                            <td><span class="event">2</span></td>
+                            <td><span class="event">{{index+1}}</span></td>
                             <td>
                                 <div><input class="form-control" value="" placeholder="请输入商品编号" v-on:change="addRow"
                                             v-model="item.goods_serial_number"></div>
@@ -166,7 +166,7 @@
                             </td>
                             <td>
                                 <div><input type="checkbox" v-model="item.gift" disabled>
-                                    <label>赠品</label></div>
+                                    <label></label></div>
                             </td>
                             <td>
                                 <div>{{item.tax_rate}}</div>
@@ -182,7 +182,7 @@
                             </td>
                             <td>
                                 <div><input type="checkbox" v-model="item.allow_excess" disabled>
-                                    <label>允许超收</label></div>
+                                    <label></label></div>
                             </td>
                             <td>
                                 <div>{{item.excess_ratio}}</div>
@@ -195,7 +195,7 @@
                         <!--订购-end-->
                         <!--退订-start-->
                         <tr v-show="orderTableFlag == 2">
-                            <td><span class="event">2</span></td>
+                            <td><span class="event">{{index+1}}</span></td>
                             <td>
                                 <div><input class="form-control" value="" placeholder="请输入商品编号" v-on:change="addRow"
                                             v-model="item.goods_serial_number"></div>

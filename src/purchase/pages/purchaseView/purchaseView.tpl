@@ -16,7 +16,7 @@
                         v-bind:disabled="!buttonUpdateFlag">编辑
                 </button>
                 <button class="btn btn-outline J_create_btn" v-on:click="createOrder($event)">新增</button>
-                <!--<button class="btn btn-outline J_audit_btn" v-on:click="audit($event)">审核</button>-->
+                <button class="btn btn-outline J_audit_btn" v-on:click="audit($event)">审核</button>
                 <button class="btn btn-outline J_delete_btn" v-on:click="save($event)"
                         v-bind:disabled="!buttonUpdateFlag">保存
                 </button>
@@ -31,6 +31,13 @@
                         <div class="base-form-content clearfix">
                             <input type="text" class="form-control" placeholder="请填写订单编号"
                                    v-model="orderData.order_id" disabled/>
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label class="control-label"><span class="font-error"></span>ERP编号</label>
+                        <div class="base-form-content clearfix">
+                            <input type="text" class="form-control" placeholder="请填写ERP编号"
+                                   v-model="orderData.erp_serial_number" disabled/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -88,8 +95,8 @@
                             <div class="switch-inline">
                                 <input type="checkbox" id="switch4" v-model="orderData.urgen_flag" disabled>
                                 <label for="switch4">
-                                    <span>非加急订单</span>
                                     <span>加急订单</span>
+                                    <span>非加急订单</span>
                                 </label>
                             </div>
                         </div>
@@ -148,7 +155,7 @@
                     <template v-for="(item,index) in rowData">
                         <!--订购-start-->
                         <tr v-show="orderTableFlag == 1">
-                            <td><span class="event">2</span></td>
+                            <td><span class="event">{{index+1}}</span></td>
                             <td>
                                 <div><input class="form-control" value="" placeholder="请输入商品编号" v-on:change="addRow"
                                             v-model="item.goods_serial_number"
@@ -176,7 +183,7 @@
                             </td>
                             <td>
                                 <div><input type="checkbox" v-model="item.gift" disabled>
-                                    <label>赠品</label></div>
+                                    <label></label></div>
                             </td>
                             <td>
                                 <div>{{item.tax_rate}}</div>
@@ -192,7 +199,7 @@
                             </td>
                             <td>
                                 <div><input type="checkbox" v-model="item.allow_excess" disabled>
-                                    <label>允许超收</label></div>
+                                    <label></label></div>
                             </td>
                             <td>
                                 <div>{{item.excess_ratio}}</div>
@@ -206,7 +213,7 @@
                         <!--订购-end-->
                         <!--退订-start-->
                         <tr v-show="orderTableFlag == 2">
-                            <td><span class="event">2</span></td>
+                            <td><span class="event">{{index+1}}</span></td>
                             <td>
                                 <div><input class="form-control" value="" placeholder="请输入商品编号" v-on:change="addRow"
                                             v-model="item.goods_serial_number"

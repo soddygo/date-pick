@@ -109,8 +109,8 @@
                                 <input type="checkbox" id="switch_urgenFlag" v-model="order.urgenFlag"
                                        v-on:click="testClick">
                                 <label for="switch_urgenFlag">
-                                    <span>非加急订单</span>
                                     <span>加急订单</span>
+                                    <span>非加急订单</span>
                                 </label>
                             </div>
                         </div>

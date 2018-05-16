@@ -10,53 +10,6 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
     // cabin.tools.cookie
 
     var handle, _fn, page;
-    //订单类型枚举
-    let orderClass = [
-        {key: "all", value: "全部"},
-        {key: "P01", value: "供应商采购订单"},
-        {key: "P02", value: "配送采购订单"},
-        {key: "P03", value: "供应商采购退单"},
-        {key: "P04", value: "配送采购退单"},
-        // {key: "P05", value: "门店间调拨单"},
-        // {key: "P06", value: "大宗采购订单"},
-    ];
-    //订单状态
-    let orderStatus = [
-        {key: "all", value: "全部"},
-        {key: "save", value: "已保存"},
-        {key: "audit", value: "已审核"},
-        {key: "complete", value: "已完成"},
-        {key: "close", value: "已关闭"},
-    ];
-    //当前页面是否可以修改等标记
-    let flagCollect = {
-        operationFlag: 1,//1:查看; 2:修改
-        hasSaveFlag: 1,//1:已经保存;2:存在未保存数据
-        // orderTableFlag: 1,//1:采购订单显示;2:采购退单显示
-    };
-    //行数据信息
-    //TODO 初始化数据,后面要修改,这里是便于测试用
-    let orderData = {
-        classSelected: "P01",
-        statusSelected: "save",//"订单状态"
-
-        order_class: "",//'订单类型',
-        order_class_name: "",//ent '订单类型中文名称',
-        order_id: "1111",//ent '订单编号，编号生成逻辑： PO+年月日+店号+流水号4位',
-
-        supplier_bh: "11111",// '供应商编号',
-        supplier_name: "test测试",//'供应商名称',
-        order_goods_address: "test",//'订货地点',
-        order_goods_date: "",// '订货日期',
-        urgen_flag: false,//'加急订单标记',
-        predict_date: "",// '预计到货日期',
-
-
-    };
-    //订单下面的,商品明细
-    let rowData = [];//新增的商品明细
-    let originRowData = [];//原本的商品明细,不允许删除,只能修改商品编号和数量
-    //采购订单明细
     page = Page({
         nodeClass: 'purchase-pages-purchaseView',
         parentClass: 'J_Main', // 没有就直接插入body，或者不插入
@@ -69,6 +22,53 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
             el: '#purchase-pages-purchaseView',
             //这里必须 使用一个方法返回给data
             data: function () {
+                //订单类型枚举
+                var orderClass = [
+                    {key: "all", value: "全部"},
+                    {key: "P01", value: "供应商采购订单"},
+                    {key: "P02", value: "配送采购订单"},
+                    {key: "P03", value: "供应商采购退单"},
+                    {key: "P04", value: "配送采购退单"},
+                    // {key: "P05", value: "门店间调拨单"},
+                    // {key: "P06", value: "大宗采购订单"},
+                ];
+                //订单状态
+                var orderStatus = [
+                    {key: "all", value: "全部"},
+                    {key: "save", value: "已保存"},
+                    {key: "audit", value: "已审核"},
+                    {key: "complete", value: "已完成"},
+                    {key: "close", value: "已关闭"},
+                ];
+                //当前页面是否可以修改等标记
+                var flagCollect = {
+                    operationFlag: 1,//1:查看; 2:修改
+                    hasSaveFlag: 1,//1:已经保存;2:存在未保存数据
+                    // orderTableFlag: 1,//1:采购订单显示;2:采购退单显示
+                };
+                //行数据信息
+                //TODO 初始化数据,后面要修改,这里是便于测试用
+                var orderData = {
+                    classSelected: "P01",
+                    statusSelected: "save",//"订单状态"
+
+                    order_class: "",//'订单类型',
+                    order_class_name: "",//ent '订单类型中文名称',
+                    order_id: "1111",//ent '订单编号，编号生成逻辑： PO+年月日+店号+流水号4位',
+                    erp_serial_number: "",// 'ERP编号',
+
+                    supplier_bh: "11111",// '供应商编号',
+                    supplier_name: "test测试",//'供应商名称',
+                    order_goods_address: "test",//'订货地点',
+                    order_goods_date: "",// '订货日期',
+                    urgen_flag: false,//'加急订单标记',
+                    predict_date: "",// '预计到货日期',
+
+
+                };
+                //订单下面的,商品明细
+                var rowData = [];//新增的商品明细
+                var originRowData = [];//原本的商品明细,不允许删除,只能修改商品编号和数量
 
                 return {
                     rowData: rowData,
@@ -88,7 +88,7 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                 });
 
                 //获取入参
-                let params = kayak.router.requestParam;
+                var params = kayak.router.requestParam;
                 // flagCollect.operationFlag = params.operationFlag;//当前页面查看标记,只读,还是编辑模式
                 console.log("params:" + JSON.stringify(params));
                 this.orderData.classSelected = params.classSelected;
@@ -98,7 +98,7 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
 
                 //init datePick
                 //current date
-                let currentDateStr = moment().format('YYYY-MM-DD');
+                var currentDateStr = moment().format('YYYY-MM-DD');
                 console.log("currentDateStr:" + currentDateStr);
 
                 //分页初始化
@@ -111,12 +111,13 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     showTotal: false,//显示总条数 boolean
                     position: null, //位置 left right center
                     callback: function (data) {
+                        //todo
                     }
                 });
 
 
                 //商品明细,添加测试数据
-                let temp1 = {
+                var temp1 = {
                     goods_serial_number: "商品编号1",//    '商品编号',
                     goods_name: "商品名称1111",//    '商品名称',
                     order_pack: "订购包装1",//    '订货包装',
@@ -131,7 +132,7 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     allow_excess: false,//    '允许超收标记',
                     excess_ratio: "10%",//   '超收比例',
                 };
-                let temp2 = {
+                var temp2 = {
                     goods_serial_number: "商品编号2",//    '商品编号',
                     goods_name: "商品名称1111",//    '商品名称',
                     order_pack: "订购包装1",//    '订货包装',
@@ -146,8 +147,8 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     allow_excess: false,//    '允许超收标记',
                     excess_ratio: "",//   '超收比例',
                 }
-                rowData.push(temp1);
-                rowData.push(temp2);
+                this.rowData.push(temp1);
+                this.rowData.push(temp2);
                 // // rowData 末尾空表航
                 // rowData.push({goods_serial_number: "", order_number: 0});
 
@@ -166,24 +167,25 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                 },
                 //编辑
                 updateOperationFlag: function (flag) {
-                    flagCollect.operationFlag = flag;
-                    flagCollect.hasSaveFlag = 2;
+                    this.flagCollect.operationFlag = flag;
+                    this.flagCollect.hasSaveFlag = 2;
                     //判断是否已有最后一行空白行
-                    let temp = rowData[rowData.length - 1];
+                    var temp = this.rowData[this.rowData.length - 1];
                     if (temp && (typeof temp.goods_serial_number !== "undefined") && temp.goods_serial_number.length === 0) {
                         //不需要增加新的空白,已有一个空白行了
                     } else {
-                        rowData.push({goods_serial_number: "", order_number: 0});//添加空白数据
+                        this.rowData.push({goods_serial_number: "", order_number: 0});//添加空白数据
                     }
                 },
                 //新增采购订单,或者采购退单
                 createOrder: function (event) {
-                    if (flagCollect.hasSaveFlag === 2) {
+                    var url = '#full/purchase/purchaseCreate:classSelected=' + this.orderData.classSelected;
+                    if (this.flagCollect.hasSaveFlag === 2) {
                         //有未保存的数据
-                        _fn.exitCurrentPage("当前界面信息未保存,是否继续新增订单?")
+                        _fn.exitCurrentPage("当前界面信息未保存,是否继续新增订单?", url);
                     } else {
                         //跳转到新增采购订单界面,订单类型,以当前页面中选择的订单类型为准
-                        kayak.router.go('#full/purchase/purchaseCreate:classSelected=' + this.orderData.classSelected)
+                        kayak.router.go(url);
                     }
                 },
                 //保存订单修改
@@ -192,11 +194,11 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                 },
                 //返回操作
                 reback: function (event) {
-                    if (flagCollect.hasSaveFlag === 2) {
+                    if (this.flagCollect.hasSaveFlag === 2) {
                         //有未保存的数据
-                        _fn.exitCurrentPage("当前界面信息未保存,是否放弃并返回?")
+                        _fn.exitCurrentPage("当前界面信息未保存,是否放弃并返回?", "#full/purchase/purchaseMain:classSelected=all")
                     } else {
-                        kayak.router.go('#full/purchase/purchaseMain:classSelected=' + this.orderData.classSelected)
+                        kayak.router.go('#full/purchase/purchaseMain:classSelected=' + this.orderData.classSelected);
                     }
                 },
                 audit: function (event) {
@@ -205,22 +207,22 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                 //增加新的空白行
                 addRow: function (event) {
                     //判断是否已有最后一行空白行
-                    let temp = rowData[rowData.length - 1];
+                    var temp = this.rowData[this.rowData.length - 1];
                     if (temp && (typeof temp.goods_serial_number !== "undefined") && temp.goods_serial_number.length === 0) {
                         //不需要增加新的空白,已有一个空白行了
                     } else {
-                        rowData.push({goods_serial_number: "", order_number: 0});//添加空白数据
+                        this.rowData.push({goods_serial_number: "", order_number: 0});//添加空白数据
                     }
                 },
                 deleteRow: function (event, index) {
-                    if (rowData.length === 1) {
+                    if (this.rowData.length === 1) {
                         //最小必须有一行明细数据,不能再少了
                         MINIPOP.show({
                             title: '消息',
                             msg: '至少必须有一行明细数据,不能再少了',
                             cancel: '我知道了'
                         });
-                    } else if (rowData.length === index + 1) {
+                    } else if (this.rowData.length === index + 1) {
                         //不允许删最后一行,因为最后一行是新增编辑用的
                         MINIPOP.show({
                             title: '消息',
@@ -230,7 +232,7 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     } else {
                         //删除明细操作
                         console.log("index:" + index);
-                        rowData.splice(index, 1);
+                        this.rowData.splice(index, 1);
                     }
                 }
 
@@ -269,8 +271,8 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     return this.orderData.statusSelected === "save";
                 },
                 //数据是否可以编辑标记
-                dataUpdateFlag:function () {
-                    return this.orderData.statusSelected === "save" && flagCollect.operationFlag === 2;
+                dataUpdateFlag: function () {
+                    return this.orderData.statusSelected === "save" && this.flagCollect.operationFlag === 2;
                 }
             }
 
@@ -279,7 +281,7 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
     handle = {};
     _fn = {
         //存在未修改数据,离开当前页面信息提示
-        exitCurrentPage: function (msg) {
+        exitCurrentPage: function (msg, url) {
             MINIPOP.show({
                 title: '警告',
                 msg: msg,
@@ -288,7 +290,7 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                 sort: 'right', //left(默认为left):cancel按钮在左，ok按钮在右,right:cancel按钮在右，ok按钮在左
                 callback: function (el, type) {
                     if (type === 'ok') {
-                        kayak.router.go('#full/purchase/purchaseMain:classSelected=all')
+                        kayak.router.go(url)
                     } else if (type === 'cancel') {
                         //无操作,停留当前界面
                     }

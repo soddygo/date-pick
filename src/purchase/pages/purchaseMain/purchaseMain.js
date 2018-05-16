@@ -16,53 +16,6 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
 
 
     var handle, _fn, page;
-    //object construct
-    let order = {
-        id: '',//订单编号
-        supplier: "",//供应商编号或者名称
-        goodsDateStart: "",//订货日期开始
-        goodsDateEnd: "",//订货日期结束
-        classSelected: "all",//订单类型
-        statusSelected: "all",//订单状态
-        goodsName: "",//商品编号或者名称
-        erpId: "",//ERP单号
-        marketingId: "",//采销平台单号
-        sourceSelected: "all",//订单来源
-        preparedByPeople: "",//创建人
-        urgenFlag: false,//加急订单标记,false:普通订单;true:加急订单
-    };
-    //订单类型枚举
-    let orderClass = [
-        {key: "all", value: "全部"},
-        {key: "P01", value: "供应商采购订单"},
-        {key: "P02", value: "配送采购订单"},
-        {key: "P03", value: "供应商采购退单"},
-        {key: "P04", value: "配送采购退单"},
-        // {key: "P05", value: "门店间调拨单"},
-        // {key: "P06", value: "大宗采购订单"},
-    ];
-    //订单状态
-    let orderStatus = [
-        {key: "all", value: "全部"},
-        {key: "save", value: "已保存"},
-        {key: "audit", value: "已审核"},
-        {key: "complete", value: "已完成"},
-        {key: "close", value: "已关闭"},
-    ];
-    //订单来源
-    let orderSource = [
-        {key: "all", value: "全部"},
-        {key: "1", value: "手工创建"},
-        {key: "2", value: "ERP同步"},
-    ];
-
-    //订单明细
-    let orderRow = [];
-
-    //订单明细被选中的行
-    let currentCheckedFlag = false;
-    let orderRowChecked = [];
-
     page = Page({
         nodeClass: 'purchase-pages-purchaseMain',
         parentClass: 'J_Main', // 没有就直接插入body，或者不插入
@@ -75,6 +28,52 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
             el: '#purchase-pages-purchaseMain',
             //这里必须 使用一个方法返回给data
             data: function () {
+                //object construct
+                var order = {
+                    id: '',//订单编号
+                    supplier: "",//供应商编号或者名称
+                    goodsDateStart: "",//订货日期开始
+                    goodsDateEnd: "",//订货日期结束
+                    classSelected: "all",//订单类型
+                    statusSelected: "all",//订单状态
+                    goodsName: "",//商品编号或者名称
+                    erpId: "",//ERP单号
+                    marketingId: "",//采销平台单号
+                    sourceSelected: "all",//订单来源
+                    preparedByPeople: "",//创建人
+                    urgenFlag: false,//加急订单标记,false:普通订单;true:加急订单
+                };
+                //订单类型枚举
+                var orderClass = [
+                    {key: "all", value: "全部"},
+                    {key: "P01", value: "供应商采购订单"},
+                    {key: "P02", value: "配送采购订单"},
+                    {key: "P03", value: "供应商采购退单"},
+                    {key: "P04", value: "配送采购退单"},
+                    // {key: "P05", value: "门店间调拨单"},
+                    // {key: "P06", value: "大宗采购订单"},
+                ];
+                //订单状态
+                var orderStatus = [
+                    {key: "all", value: "全部"},
+                    {key: "save", value: "已保存"},
+                    {key: "audit", value: "已审核"},
+                    {key: "complete", value: "已完成"},
+                    {key: "close", value: "已关闭"},
+                ];
+                //订单来源
+                var orderSource = [
+                    {key: "all", value: "全部"},
+                    {key: "1", value: "手工创建"},
+                    {key: "2", value: "ERP同步"},
+                ];
+
+                //订单明细
+                var orderRow = [];
+
+                //订单明细被选中的行
+                var currentCheckedFlag = false;
+                var orderRowChecked = [];
 
                 return {
                     order: order,
@@ -87,6 +86,7 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 }
             },
             mounted: function () {
+                var order = this.order ;
                 //进入页面
                 //cabinVue 里面所有的this 都指向当前这个vue 实例
                 //vue 更多使用方法请查看vue官方文档
@@ -97,7 +97,7 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
 
                 //init datePick
                 //current date
-                let currentDateStr = moment().format('YYYY-MM-DD');
+                var currentDateStr = moment().format('YYYY-MM-DD');
                 console.log("currentDateStr:" + currentDateStr);
                 $('#goodsDateStart').PdDatePicker({
                     startView: 2,
@@ -106,7 +106,7 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                     format: 'YYYY-MM-DD',
                     //containerId: 'abc'
                 }).on('change', function (evt, data) {
-                    let date = moment(data).format('YYYY-MM-DD');
+                    var date = moment(data).format('YYYY-MM-DD');
                     order.goodsDateStart = date;
                 });
                 $('#goodsDateEnd').PdDatePicker({
@@ -116,7 +116,7 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                     format: 'YYYY-MM-DD',
                     //containerId: 'abc'
                 }).on('change', function (evt, data) {
-                    let date = moment(data).format('YYYY-MM-DD');
+                    var date = moment(data).format('YYYY-MM-DD');
                     order.goodsDateEnd = date;
                 });
 
@@ -134,11 +134,12 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                     showTotal: false,//显示总条数 boolean
                     position: null, //位置 left right center
                     callback: function (data) {
+                        //todo
                     }
                 });
 
                 //订单明细,添加测试数据
-                let temp1 = {
+                var temp1 = {
                     order_class: "P01",//'订单类型',
                     order_class_name: "供应商采购订单",//'订单类型中文名称',
                     order_id: "2222",//'订单编号，编号生成逻辑： PO+年月日+店号+流水号4位',
@@ -154,7 +155,7 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                     order_source: "手工创建",//'订单来源',
                     tax_included_amount: 100,// '含税金额',
                 };
-                let temp2 = {
+                var temp2 = {
                     order_class: "P01",//'订单类型',
                     order_class_name: "供应商采购订单",//'订单类型中文名称',
                     order_id: "1111",//'订单编号，编号生成逻辑： PO+年月日+店号+流水号4位',
@@ -170,8 +171,8 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                     order_source: "手工创建",//'订单来源',
                     tax_included_amount: 100,// '含税金额',
                 };
-                orderRow.push(temp1);
-                orderRow.push(temp2);
+                this.orderRow.push(temp1);
+                this.orderRow.push(temp2);
 
             },
             //如果 不需要保存页面状态必须添加下面这个方法
@@ -187,7 +188,7 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                     console.log('mounted')
                 },
                 doQuery: function () {
-                    console.log("点击了查询按钮,order.id:" + order.id);
+                    console.log("点击了查询按钮,order.id:" + this.order.id);
                     ajax.post(ajax.queryOrderCancel, {}, function (res) {
                         console.log(res.length);
                     });
@@ -196,12 +197,12 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 dbClickView: function (event, orderId) {
                     //双击查看行数据明细
                     // kayak.router.go('#index/xxx/xxx:id=1&code=2')
-                    kayak.router.go("#full/purchase/purchaseView:classSelected=" + order.classSelected
-                        + "&statusSelected=" + order.statusSelected + "&operationFlag=1"
+                    kayak.router.go("#full/purchase/purchaseView:classSelected=" + this.order.classSelected
+                        + "&statusSelected=" + this.order.statusSelected + "&operationFlag=1"
                         + "&orderId=" + orderId);
                 },
                 testClick: function (event) {
-                    console.log("order.urgenFlag:" + order.urgenFlag);
+                    console.log("order.urgenFlag:" + this.order.urgenFlag);
                     console.log("this.order.goodsDateEnd :" + this.order.goodsDateEnd);
                 },
                 //新增采购订单,或者采购退单
@@ -211,7 +212,8 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 },
                 //删除订单
                 deleteRow: function (event) {
-                    let tempOrderRowChecked = this.orderRowChecked;
+                   var orderRow =  this.orderRow;
+                    var tempOrderRowChecked = this.orderRowChecked;
                     if (tempOrderRowChecked.length === 0) {
                         //没有选中的选项,禁止操作删除按钮
                     } else {
@@ -227,9 +229,9 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                                     //todo 删除订单数据
                                     //1. 删除前端数据
                                     for (_index in tempOrderRowChecked) {
-                                        let _orderId = tempOrderRowChecked[_index];
+                                        var _orderId = tempOrderRowChecked[_index];
                                         for (_rowIndex in orderRow) {
-                                            let rowItem = orderRow[_rowIndex];
+                                            var rowItem = orderRow[_rowIndex];
                                             if (_orderId === rowItem.order_id) {
                                                 orderRow.splice(_rowIndex, 1);
                                             }
@@ -250,8 +252,8 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                         this.orderRowChecked.splice(0, this.orderRowChecked.length);
                     } else {
                         this.orderRowChecked.splice(0, this.orderRowChecked.length);
-                        for (_index in orderRow) {
-                            let item = orderRow[_index];
+                        for (_index in this.orderRow) {
+                            var item = this.orderRow[_index];
                             this.orderRowChecked.push(item.order_id);
                         }
                     }
