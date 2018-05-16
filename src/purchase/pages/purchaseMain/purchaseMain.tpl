@@ -50,20 +50,20 @@
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订单类型</label>
                         <div class="base-form-content clearfix">
-                            <select type="text" class="form-control" placeholder="请选择订单类型"
+                            <vue-chosen type="text" class="form-control" placeholder="请选择订单类型"
                                     v-model="order.classSelected">
                                 <option v-for="option in orderClass" v-bind:value="option.key">{{option.value}}</option>
-                            </select>
+                            </vue-chosen>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订单状态</label>
                         <div class="base-form-content clearfix">
-                            <select type="text" class="form-control" placeholder="请选择订单状态"
+                            <vue-chosen type="text" class="form-control" placeholder="请选择订单状态"
                                     v-model="order.statusSelected">
                                 <option v-for="option in orderStatus" v-bind:value="option.key">{{option.value}}
                                 </option>
-                            </select>
+                            </vue-chosen>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -88,11 +88,11 @@
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订单来源</label>
                         <div class="base-form-content clearfix">
-                            <select type="text" class="form-control" placeholder="请选择订单来源"
+                            <vue-chosen type="text" class="form-control" placeholder="请选择订单来源"
                                     v-model="order.sourceSelected">
                                 <option v-for="option in orderSource" v-bind:value="option.key">{{option.value}}
                                 </option>
-                            </select>
+                            </vue-chosen>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">

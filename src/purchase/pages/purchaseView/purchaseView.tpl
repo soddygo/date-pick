@@ -52,11 +52,11 @@
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订单状态</label>
                         <div class="base-form-content clearfix">
-                            <select type="text" class="form-control" placeholder="请选择订单状态"
+                            <vue-chosen type="text" class="form-control" placeholder="请选择订单状态"
                                     v-model="orderData.statusSelected" disabled>
                                 <option v-for="option in orderStatus" v-bind:value="option.key">{{option.value}}
                                 </option>
-                            </select>
+                            </vue-chosen>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
