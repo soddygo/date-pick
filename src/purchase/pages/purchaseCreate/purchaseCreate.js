@@ -24,7 +24,7 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
             data: function () {
                 //订单类型枚举
                 var orderClass = [
-                    {key: "all", value: "全部"},
+                    {key: "", value: "请选择订单类型"},
                     {key: "P01", value: "供应商采购订单"},
                     {key: "P02", value: "配送采购订单"},
                     {key: "P03", value: "供应商采购退单"},
@@ -34,7 +34,7 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                 ];
                 //订单状态
                 var orderStatus = [
-                    {key: "all", value: "全部"},
+                    {key: "", value: "无状态"},
                     {key: "save", value: "已保存"},
                     {key: "audit", value: "已审核"},
                     {key: "complete", value: "已完成"},
@@ -44,7 +44,6 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                 var flagCollect = {
                     operationFlag: 1,//1:查看; 2:修改
                     hasSaveFlag: 2,//1:已经保存;2:存在未保存数据
-                    // orderTableFlag: 1,//1:采购订单显示;2:采购退单显示
                 };
                 //行数据信息
                 //TODO 初始化数据,后面要修改,这里是便于测试用
@@ -78,7 +77,7 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                     excess_ratio: "",//   '超收比例',
                 };
                 //商品明细-采购退单
-                var defualtRowDataCancelInfo = {
+                var defaultRowDataCancelInfo = {
                     goods_serial_number: "",// comment '商品编号',
                     goods_name: "",// comment '商品名称',
                     order_pack: "",// comment '订货包装',
@@ -100,7 +99,7 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                     orderClass: orderClass,
                     orderStatus: orderStatus,
                     defaultRowDataInfo: defaultRowDataInfo,
-                    defualtRowDataCancelInfo: defualtRowDataCancelInfo,
+                    defaultRowDataCancelInfo: defaultRowDataCancelInfo,
                 }
             },
             mounted: function () {
@@ -236,7 +235,7 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                         //     this. rowData.push(blankObj)
                         // } else if (this.orderData.classSelected === "P03" || this.orderData.classSelected === "P04") {
                         //     //退单
-                        //     var blankObj = $.extend({}, this.defualtRowDataCancelInfo);
+                        //     var blankObj = $.extend({}, this.defaultRowDataCancelInfo);
                         //     this.rowData.push(blankObj)
                         // } else {
                         //     this. rowData.push({goods_serial_number: "", order_number: 0});//添加空白数据
