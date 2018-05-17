@@ -56,10 +56,10 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 //订单状态
                 var orderStatus = [
                     {key: "all", value: "全部"},
-                    {key: "save", value: "已保存"},
-                    {key: "audit", value: "已审核"},
-                    {key: "complete", value: "已完成"},
-                    {key: "close", value: "已关闭"},
+                    {key: "1", value: "已保存"},
+                    {key: "2", value: "已审核"},
+                    {key: "3", value: "已完成"},
+                    {key: "4", value: "已关闭"},
                 ];
                 //订单来源
                 var orderSource = [
@@ -131,7 +131,7 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                     totalCount: 200, //总条数
                     pageRange: 9, //间隔多少个
                     select: [30, 60, 100], //下拉选项
-                    showTotal: false,//显示总条数 boolean
+                    showTotal: true,//显示总条数 boolean
                     position: null, //位置 left right center
                     callback: function (data) {
                         //todo

@@ -35,10 +35,10 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                 //订单状态
                 var orderStatus = [
                     {key: "", value: "无状态"},
-                    {key: "save", value: "已保存"},
-                    {key: "audit", value: "已审核"},
-                    {key: "complete", value: "已完成"},
-                    {key: "close", value: "已关闭"},
+                    {key: "1", value: "已保存"},
+                    {key: "2", value: "已审核"},
+                    {key: "3", value: "已完成"},
+                    {key: "4", value: "已关闭"},
                 ];
                 //当前页面是否可以修改等标记
                 var flagCollect = {
