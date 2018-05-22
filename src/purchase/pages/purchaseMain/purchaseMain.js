@@ -35,7 +35,7 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                     goodsDateStart: "",//订货日期开始
                     goodsDateEnd: "",//订货日期结束
                     classSelected: "all",//订单类型
-                    statusSelected: "all",//订单状态
+                    statusSelected: 0,//订单状态
                     goodsName: "",//商品编号或者名称
                     erpId: "",//ERP单号
                     marketingId: "",//采销平台单号
@@ -55,11 +55,11 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 ];
                 //订单状态
                 var orderStatus = [
-                    {key: "all", value: "全部"},
-                    {key: "1", value: "已保存"},
-                    {key: "2", value: "已审核"},
-                    {key: "3", value: "已完成"},
-                    {key: "4", value: "已关闭"},
+                    {key: 0, value: "全部"},
+                    {key: 1, value: "已保存"},
+                    {key: 2, value: "已审核"},
+                    {key: 3, value: "已完成"},
+                    {key: 4, value: "已关闭"},
                 ];
                 //订单来源
                 var orderSource = [
@@ -75,6 +75,13 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 var currentCheckedFlag = false;
                 var orderRowChecked = [];
 
+                //分页信息
+                var page = {
+                    currentPage: 1,
+                    pageSize: 30,
+                    totalCount: 0,
+                };
+
                 return {
                     order: order,
                     orderRow: orderRow,
@@ -83,10 +90,12 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                     orderClass: orderClass,
                     orderStatus: orderStatus,
                     orderSource: orderSource,
+                    page: page,
+                    firstPageFlag: 0,//第一次进入页面默认标记,点击查询,则修改标记
                 }
             },
             mounted: function () {
-                var order = this.order ;
+                var order = this.order;
                 //进入页面
                 //cabinVue 里面所有的this 都指向当前这个vue 实例
                 //vue 更多使用方法请查看vue官方文档
@@ -124,56 +133,6 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 this.order.goodsDateEnd = currentDateStr;
 
 
-                //分页初始化
-                $('#page').NextPage({
-                    pageSize: 30, //每页大小,
-                    currentPage: 1, //当前页
-                    totalCount: 200, //总条数
-                    pageRange: 9, //间隔多少个
-                    select: [30, 60, 100], //下拉选项
-                    showTotal: true,//显示总条数 boolean
-                    position: null, //位置 left right center
-                    callback: function (data) {
-                        //todo
-                    }
-                });
-
-                //订单明细,添加测试数据
-                var temp1 = {
-                    order_class: "P01",//'订单类型',
-                    order_class_name: "供应商采购订单",//'订单类型中文名称',
-                    order_id: "2222",//'订单编号，编号生成逻辑： PO+年月日+店号+流水号4位',
-                    order_status: "已保存",//'订单状态',
-                    supplier_bh: "供应商编号11",//'供应商编号',
-                    supplier_name: "供应商名称11",//'供应商名称',
-                    order_goods_address: "test",//'订货地点',
-                    order_goods_date: "2018-05-01",//'订货日期',
-                    urgen_flag: false,//'加急订单标记',
-                    predict_date: "2018-05-05",//'预计到货日期',
-                    erp_serial_number: "111",//'ERP编号',
-                    marketing_serial_number: "1111",//'采销平台编号',
-                    order_source: "手工创建",//'订单来源',
-                    tax_included_amount: 100,// '含税金额',
-                };
-                var temp2 = {
-                    order_class: "P01",//'订单类型',
-                    order_class_name: "供应商采购订单",//'订单类型中文名称',
-                    order_id: "1111",//'订单编号，编号生成逻辑： PO+年月日+店号+流水号4位',
-                    order_status: "已保存",//'订单状态',
-                    supplier_bh: "供应商编号11",//'供应商编号',
-                    supplier_name: "供应商名称11",//'供应商名称',
-                    order_goods_address: "test",//'订货地点',
-                    order_goods_date: "2018-05-01",//'订货日期',
-                    urgen_flag: true,//'加急订单标记',
-                    predict_date: "2018-05-05",//'预计到货日期',
-                    erp_serial_number: "111",//'ERP编号',
-                    marketing_serial_number: "1111",//'采销平台编号',
-                    order_source: "手工创建",//'订单来源',
-                    tax_included_amount: 100,// '含税金额',
-                };
-                this.orderRow.push(temp1);
-                this.orderRow.push(temp2);
-
             },
             //如果 不需要保存页面状态必须添加下面这个方法
             beforeDestroy: function () {
@@ -197,7 +156,7 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 dbClickView: function (event, orderId) {
                     //双击查看行数据明细
                     // kayak.router.go('#index/xxx/xxx:id=1&code=2')
-                    kayak.router.go("#full/purchase/purchaseView:classSelected=" + this.order.classSelected
+                    kayak.router.go("#full/purchase/purchaseView:classSelected=" + (this.order.classSelected ==="all"?"P01":this.order.classSelected)
                         + "&statusSelected=" + this.order.statusSelected + "&operationFlag=1"
                         + "&orderId=" + orderId);
                 },
@@ -208,12 +167,13 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 //新增采购订单,或者采购退单
                 createOrder: function (event) {
                     //主界面,不需要验证是否有数据未保存
-                    kayak.router.go('#full/purchase/purchaseCreate:classSelected=' + this.order.classSelected)
+                    kayak.router.go('#full/purchase/purchaseCreate:classSelected=' + (this.order.classSelected ==="all"?"P01":this.order.classSelected))
                 },
                 //删除订单
                 deleteRow: function (event) {
-                   var orderRow =  this.orderRow;
+                    var orderRow = this.orderRow;
                     var tempOrderRowChecked = this.orderRowChecked;
+                    var orderType = this.order.classSelected;//订单类型
                     if (tempOrderRowChecked.length === 0) {
                         //没有选中的选项,禁止操作删除按钮
                     } else {
@@ -227,17 +187,41 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                             callback: function (el, type) {
                                 if (type === 'ok') {
                                     //todo 删除订单数据
-                                    //1. 删除前端数据
-                                    for (_index in tempOrderRowChecked) {
-                                        var _orderId = tempOrderRowChecked[_index];
-                                        for (_rowIndex in orderRow) {
-                                            var rowItem = orderRow[_rowIndex];
-                                            if (_orderId === rowItem.order_id) {
-                                                orderRow.splice(_rowIndex, 1);
-                                            }
-                                        }
+
+                                    var requestParam = {
+                                        orderStr: tempOrderRowChecked.join(","),
+                                        orderType: orderType
                                     }
+
                                     //2. 调用后端数据
+                                    ajax.post(ajax.deleteByOrderId, requestParam, function (res) {
+                                        cabin.widgets.loading.hide();
+                                        if (res.code === "0000") {
+                                            //1. 删除前端数据
+                                            for (var _index in tempOrderRowChecked) {
+                                                var _orderId = tempOrderRowChecked[_index];
+                                                for (var _rowIndex in orderRow) {
+                                                    var rowItem = orderRow[_rowIndex];
+                                                    if (_orderId === rowItem.order_id) {
+                                                        orderRow.splice(_rowIndex, 1);
+                                                    }
+                                                }
+                                            }
+                                            //保存成功
+                                            MINIPOP.show({
+                                                title: '提示',
+                                                msg: '删除成功',
+                                                cancel: '确认'
+                                            });
+                                        } else {
+                                            //失败
+                                            MINIPOP.show({
+                                                title: '提示',
+                                                msg: '删除失败',
+                                                cancel: '确认'
+                                            });
+                                        }
+                                    });
                                 } else if (type === 'cancel') {
                                     //无操作,停留当前界面
                                 }
@@ -257,6 +241,75 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                             this.orderRowChecked.push(item.order_id);
                         }
                     }
+                },
+                //订单搜索
+                search: function (event) {
+
+                    this.firstPageFlag = 1;//修改第一次进入页面标记
+                    //转译字段名称
+                    var purchaseOrderMain = _fn.convertParams(this.order, this.page.currentPage, this.page.pageSize);
+
+                    var initPageWidget = this.$options.methods.initPageWidget.bind(this);
+                    var orderRow = this.orderRow;
+
+                    cabin.widgets.loading.show();
+                    orderRow.splice(0, orderRow.length);//清空数据
+
+                    if (this.order.goodsName !== "") {
+                        //从商品明细里搜
+                        ajax.post(ajax.searchOrderGoods, purchaseOrderMain, function (res) {
+                            initPageWidget(res.data.totalCount, ajax.searchOrderGoods);//分页组件初始化
+                            for (var key in res.data.result) {
+                                orderRow.push(res.data.result[key]);
+                            }
+                            cabin.widgets.loading.hide();
+                        });
+                    } else {
+                        //从商品基本订单里搜
+                        ajax.post(ajax.searchOrderMain, purchaseOrderMain, function (res) {
+                            initPageWidget(res.data.totalCount, ajax.searchOrderMain);
+                            for (var key in res.data.result) {
+                                orderRow.push(res.data.result[key]);
+                            }
+                            cabin.widgets.loading.hide();
+
+                        });
+                    }
+
+                },
+                initPageWidget: function (totalCount, url) {
+                    var page = this.page;
+                    var order = this.order;
+                    var orderRow = this.orderRow;
+
+                    page.totalCount = totalCount;
+
+                    //分页初始化
+                    $('#page').NextPage({
+                        pageSize: page.pageSize, //每页大小,
+                        currentPage: page.currentPage, //当前页
+                        totalCount: totalCount, //总条数
+                        pageRange: 9, //间隔多少个
+                        select: [30, 60, 100], //下拉选项
+                        showTotal: true,//显示总条数 boolean
+                        position: "right", //位置 left right center
+                        callback: function (data, isNextPage) {
+                            page.currentPage = data.currentPage;
+                            page.pageSize = data.pageSize;
+
+                            var purchaseOrderMain = _fn.convertParams(order, page.currentPage, page.pageSize);
+                            cabin.widgets.loading.show();
+                            orderRow.splice(0, orderRow.length);//清空数据
+
+                            //请求后台数据
+                            ajax.post(url, purchaseOrderMain, function (res) {
+                                for (var key in res.data.result) {
+                                    orderRow.push(res.data.result[key]);
+                                }
+                                cabin.widgets.loading.hide();
+                            });
+                        }
+                    });
                 }
             },
             computed: {
@@ -269,12 +322,75 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 },
                 lookButtonFlag: function () {
                     return this.orderRowChecked.length === 0 || this.orderRowChecked.length > 1;
+                },
+
+            },
+            filters: {
+                statusFilter: function (obj) {
+                    var result = "无订单状态信息";
+                    switch (obj) {
+                        case 1:
+                            result = "已保存";
+                            break;
+                        case 2:
+                            result = "已审核";
+                            break;
+                        case 3:
+                            result = "已完成";
+                            break;
+                        case 4:
+                            result = "已关闭";
+                            break;
+                        default:
+                            break;
+                    }
+                    return result;
+                },
+                sourceFilter: function (value) {
+                    var result = "无订单来源信息";
+                    switch (value) {
+                        case 1:
+                            result = "手工创建";
+                            break;
+                        case 2:
+                            result = "ERP同步";
+                            break;
+                        default:
+                            break;
+                    }
+                    return result;
+
                 }
-            }
+
+            },
+            watch: {}
 
         }
     });
     handle = {};
-    _fn = {};
+    _fn = {
+        convertParams: function (order, pageNo, pageSize) {
+            //转译字段名称
+            var purchaseOrderMain = {
+                orderId: order.orderId,
+                supplierSearch: order.supplier,
+                orderGoodsStartDate: order.goodsDateStart,
+                orderGoodsEndDate: order.goodsDateEnd,
+                orderClass: order.classSelected,
+                orderStatusCode: order.statusSelected,
+                goodsSearch: order.goodsName,
+                erpSerialNumber: order.erpId,
+                marketingSerialNumber: order.marketingId,
+                orderSource: order.sourceSelected,
+                preparedByPeople: order.preparedByPeople,
+                urgenFlag: order.urgenFlag === false ? 0 : 1,
+
+                pageNo: pageNo,
+                pageSize: pageSize,
+
+            };
+            return purchaseOrderMain;
+        }
+    };
     return page;
 });

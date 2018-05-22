@@ -26,7 +26,7 @@
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label">订单编号</label>
                         <div class="base-form-content clearfix">
-                            <input type="text" class="form-control" placeholder="请填写订单编号" v-model="order.id"/>
+                            <input type="text" class="form-control" placeholder="请填写订单编号" v-model="order.orderId"/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -122,14 +122,14 @@
             <!--搜索条件结束-->
             <!--搜索按钮-->
             <div class="stage-search right">
-                <button class="btn btn-primary" v-on:click="doQuery">查询</button>
+                <button class="btn btn-primary" v-on:click="search">查询</button>
             </div>
             <!--搜索按钮结束-->
         </div>
         <!--搜索框 stage 结束-->
 
         <!--搜索结果stage-->
-        <div class="stage">
+        <div class="stage" v-show="page.totalCount !== 0">
             <!--表格盒子-->
             <!--左右滑动表格-->
             <div class="table-responsive">
@@ -158,34 +158,34 @@
                     </thead>
                     <tbody>
                     <template v-for="(item,index) in orderRow">
-                        <tr v-on:dblclick="dbClickView($event,item.order_id)">
+                        <tr v-on:dblclick="dbClickView($event,item.orderId)">
                             <td>
                                 <div class="checkbox">
-                                    <input type="checkbox" v-bind:id="item.order_id" v-bind:value="item.order_id"
+                                    <input type="checkbox" v-bind:id="item.orderId" v-bind:value="item.orderId"
                                            v-model="orderRowChecked">
-                                    <label v-bind:for="item.order_id"></label>
+                                    <label v-bind:for="item.orderId"></label>
                                 </div>
                             </td>
                             <td>
-                                <div>{{item.order_id}}</div>
+                                <div>{{item.orderId}}</div>
                             </td>
                             <td>
-                                <div>{{item.order_class_name}}</div>
+                                <div>{{item.orderClassName}}</div>
                             </td>
                             <td>
-                                <div>{{item.supplier_name}}</div>
+                                <div>{{item.supplierName}}</div>
                             </td>
                             <td>
-                                <div>{{item.tax_included_amount}}</div>
+                                <div>{{item.taxIncludedAmount}}</div>
                             </td>
                             <td>
-                                <div>{{item.order_goods_date}}</div>
+                                <div>{{item.orderGoodsDate}}</div>
                             </td>
                             <td>
-                                <div>{{item.predict_date}}</div>
+                                <div>{{item.predictDate}}</div>
                             </td>
                             <td>
-                                <div>{{item.order_source}}</div>
+                                <div>{{item.orderSource | sourceFilter}}</div>
                             </td>
                             <td>
                                 <div class="checkbox"><input type="checkbox" v-bind:id="item.order_id + 2"
@@ -193,21 +193,31 @@
                                     <label v-bind:for="item.order_id + 2"></label></div>
                             </td>
                             <td>
-                                <div>admin</div>
+                                <div>{{item.preparedByPeople}}</div>
                             </td>
                             <td>
-                                <div>已审核</div>
+                                <div>{{item.orderStatusCode | statusFilter }}</div>
                             </td>
                         </tr>
                     </template>
                     </tbody>
                 </table>
                 <!--表格 end-->
+
+
             </div>
             <!--左右滑动表格 end-->
             <!--分页-->
             <div id="page"></div>
             <!--分页end-->
+
+        </div>
+        <div style="min-height:400px;" v-show="page.totalCount === 0 && firstPageFlag === 1">
+            <div class="empty-table">
+                <div class="text" style="margin-bottom: -10px;font-size: 14px;line-height: 15px;text-align: center;">
+                    <p>很抱歉，没有找到相关数据</p>
+                </div>
+            </div>
         </div>
         <!--搜索结果stage end-->
     </div>
