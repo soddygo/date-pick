@@ -156,18 +156,17 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 dbClickView: function (event, orderId) {
                     //双击查看行数据明细
                     // kayak.router.go('#index/xxx/xxx:id=1&code=2')
-                    kayak.router.go("#full/purchase/purchaseView:classSelected=" + (this.order.classSelected ==="all"?"P01":this.order.classSelected)
-                        + "&statusSelected=" + this.order.statusSelected + "&operationFlag=1"
-                        + "&orderId=" + orderId);
+                    kayak.router.go("#full/purchase/purchaseView:orderId=" + orderId);
                 },
-                testClick: function (event) {
-                    console.log("order.urgenFlag:" + this.order.urgenFlag);
-                    console.log("this.order.goodsDateEnd :" + this.order.goodsDateEnd);
+                //选中查看
+                lookClickView: function (event) {
+                    var tempOrderRowChecked = this.orderRowChecked;//选择的数组,查看只能有一条数据在里面
+                    kayak.router.go("#full/purchase/purchaseView:orderId=" + tempOrderRowChecked[0]);
                 },
                 //新增采购订单,或者采购退单
                 createOrder: function (event) {
                     //主界面,不需要验证是否有数据未保存
-                    kayak.router.go('#full/purchase/purchaseCreate:classSelected=' + (this.order.classSelected ==="all"?"P01":this.order.classSelected))
+                    kayak.router.go('#full/purchase/purchaseCreate:classSelected=' + (this.order.classSelected === "all" ? "P01" : this.order.classSelected))
                 },
                 //删除订单
                 deleteRow: function (event) {
@@ -191,33 +190,35 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                                     var requestParam = {
                                         orderStr: tempOrderRowChecked.join(","),
                                         orderType: orderType
-                                    }
+                                    };
 
                                     //2. 调用后端数据
                                     ajax.post(ajax.deleteByOrderId, requestParam, function (res) {
                                         cabin.widgets.loading.hide();
                                         if (res.code === "0000") {
-                                            //1. 删除前端数据
-                                            for (var _index in tempOrderRowChecked) {
-                                                var _orderId = tempOrderRowChecked[_index];
-                                                for (var _rowIndex in orderRow) {
-                                                    var rowItem = orderRow[_rowIndex];
-                                                    if (_orderId === rowItem.order_id) {
-                                                        orderRow.splice(_rowIndex, 1);
-                                                    }
-                                                }
-                                            }
+
                                             //保存成功
                                             MINIPOP.show({
                                                 title: '提示',
                                                 msg: '删除成功',
                                                 cancel: '确认'
                                             });
+                                            //1. 删除前端数据
+                                            for (var _index in tempOrderRowChecked) {
+                                                var _orderId = tempOrderRowChecked[_index];
+                                                for (var _rowIndex in orderRow) {
+                                                    var rowItem = orderRow[_rowIndex];
+                                                    if (_orderId === rowItem.orderId) {
+                                                        orderRow.splice(_rowIndex, 1);
+                                                    }
+                                                }
+                                            }
+                                            console.log(JSON.stringify(orderRow))
                                         } else {
                                             //失败
                                             MINIPOP.show({
                                                 title: '提示',
-                                                msg: '删除失败',
+                                                msg: res.msg,
                                                 cancel: '确认'
                                             });
                                         }
@@ -236,9 +237,9 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                         this.orderRowChecked.splice(0, this.orderRowChecked.length);
                     } else {
                         this.orderRowChecked.splice(0, this.orderRowChecked.length);
-                        for (_index in this.orderRow) {
+                        for (var _index in this.orderRow) {
                             var item = this.orderRow[_index];
-                            this.orderRowChecked.push(item.order_id);
+                            this.orderRowChecked.push(item.orderId);
                         }
                     }
                 },
@@ -360,6 +361,26 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                     }
                     return result;
 
+                },
+                classTypeFilter: function (value) {
+                    var result = "无订单类型信息";
+                    switch (value) {
+                        case 'P01':
+                            result = "供应商采购订单";
+                            break;
+                        case 'P02':
+                            result = "配送采购订单";
+                            break;
+                        case 'P03':
+                            result = "供应商采购退单";
+                            break;
+                        case 'P04':
+                            result = "配送采购退单";
+                            break;
+                        default:
+                            break;
+                    }
+                    return result;
                 }
 
             },
@@ -390,6 +411,14 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
 
             };
             return purchaseOrderMain;
+        },
+        guid: function () {
+            function S4() {
+                return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+            }
+
+            // return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+            return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4());
         }
     };
     return page;

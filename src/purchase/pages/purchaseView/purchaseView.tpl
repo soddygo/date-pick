@@ -18,7 +18,7 @@
                 <button class="btn btn-outline J_create_btn" v-on:click="createOrder($event)">新增</button>
                 <button class="btn btn-outline J_audit_btn" v-on:click="audit($event)">审核</button>
                 <button class="btn btn-outline J_delete_btn" v-on:click="save($event)"
-                        v-bind:disabled="!buttonUpdateFlag">保存
+                        v-bind:disabled="!buttonSaveFlag">保存
                 </button>
                 <button class="btn btn-primary J_delete_btn" v-on:click="reback($event)">返回</button>
             </div>
@@ -30,21 +30,21 @@
                         <label class="control-label"><span class="font-error"></span>订单编号</label>
                         <div class="base-form-content clearfix">
                             <input type="text" class="form-control" placeholder="请填写订单编号"
-                                   v-model="orderData.order_id" disabled/>
+                                   v-model="orderData.orderId" disabled/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>ERP编号</label>
                         <div class="base-form-content clearfix">
                             <input type="text" class="form-control" placeholder="请填写ERP编号"
-                                   v-model="orderData.erp_serial_number" disabled/>
+                                   v-model="orderData.erpSerialNumber" disabled/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订单类型</label>
                         <div class="base-form-content clearfix">
                             <select type="text" class="form-control" placeholder="请选择订单类型"
-                                    v-model="orderData.classSelected" disabled>
+                                    v-model="orderData.orderClass" disabled>
                                 <option v-for="option in orderClass" v-bind:value="option.key">{{option.value}}</option>
                             </select>
                         </div>
@@ -53,7 +53,7 @@
                         <label class="control-label"><span class="font-error"></span>订单状态</label>
                         <div class="base-form-content clearfix">
                             <vue-chosen type="text" class="form-control" placeholder="请选择订单状态"
-                                    v-model="orderData.statusSelected" disabled>
+                                        v-model="orderData.orderStatusCode" disabled>
                                 <option v-for="option in orderStatus" v-bind:value="option.key">{{option.value}}
                                 </option>
                             </vue-chosen>
@@ -63,21 +63,21 @@
                         <label class="control-label"><span class="font-error"></span>供应商</label>
                         <div class="base-form-content clearfix">
                             <input type="text" class="form-control" placeholder="请填写供应商"
-                                   v-model="orderData.supplier_bh" disabled/>
+                                   v-model="orderData.supplierName" disabled/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订货地点</label>
                         <div class="base-form-content clearfix">
                             <input type="text" class="form-control" placeholder="请填写订货地点"
-                                   v_model="orderData.order_goods_address" disabled/>
+                                   v_model="orderData.orderGoodsAddress" disabled/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>订货日</label>
                         <div class="base-form-content clearfix">
                             <input type="text" class="form-control" placeholder="请填写订货日"
-                                   v-model="orderData.order_goods_date" disabled/>
+                                   v-model="orderData.orderGoodsDate" disabled/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -85,7 +85,7 @@
                         <div class="base-form-content clearfix">
                             <input type="text" class="form-control icondate icontime" id="predict_date_id"
                                    placeholder="请填写到货日"
-                                   v-model="orderData.predict_date" disabled/>
+                                   v-model="orderData.predictDate" disabled/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -93,7 +93,7 @@
                         <!--行模块：内容-->
                         <div class="base-form-content clearfix">
                             <div class="switch-inline">
-                                <input type="checkbox" id="switch4" v-model="orderData.urgen_flag" disabled>
+                                <input type="checkbox" id="switch4" v-model="orderData.urgenFlag" disabled>
                                 <label for="switch4">
                                     <span>加急订单</span>
                                     <span>非加急订单</span>
@@ -158,51 +158,51 @@
                             <td><span class="event">{{index+1}}</span></td>
                             <td>
                                 <div><input class="form-control" value="" placeholder="请输入商品编号" v-on:change="addRow"
-                                            v-model="item.goods_serial_number"
+                                            v-model="item.goodsSerialNumber"
                                             v-bind:disabled="!dataUpdateFlag">
                                 </div>
                             </td>
                             <td>
-                                <div>{{item.goods_name}}</div>
+                                <div>{{item.goodsName}}</div>
                             </td>
                             <td>
-                                <div>{{item.order_pack}}</div>
+                                <div>{{item.orderPack}}</div>
                             </td>
                             <td>
                                 <div><input type="number" step="0.01" class="form-control" value=""
                                             placeholder="支持小数点2位"
-                                            v-model="item.order_number"
+                                            v-model="item.orderNumber"
                                             v-bind:disabled="!dataUpdateFlag">
                                 </div>
                             </td>
                             <td>
-                                <div>{{item.repertory_unit}}</div>
+                                <div>{{item.repertoryUnit}}</div>
                             </td>
                             <td>
-                                <div>{{item.repertory_number}}</div>
+                                <div>{{item.repertoryNumber}}</div>
                             </td>
                             <td>
                                 <div><input type="checkbox" v-model="item.gift" disabled>
                                     <label></label></div>
                             </td>
                             <td>
-                                <div>{{item.tax_rate}}</div>
+                                <div>{{item.taxRate}}</div>
                             </td>
                             <td>
-                                <div>{{item.tax_included_pay}}</div>
+                                <div>{{item.taxIncludedPay}}</div>
                             </td>
                             <td>
-                                <div>{{item.tax_included_amount}}</div>
+                                <div>{{item.taxIncludedAmount}}</div>
                             </td>
                             <td>
-                                <div>{{item.goods_bar_code}}</div>
+                                <div>{{item.goodsBarCode}}</div>
                             </td>
                             <td>
-                                <div><input type="checkbox" v-model="item.allow_excess" disabled>
+                                <div><input type="checkbox" v-model="item.allowExcess" disabled>
                                     <label></label></div>
                             </td>
                             <td>
-                                <div>{{item.excess_ratio}}</div>
+                                <div>{{item.excessRatio}}</div>
                             </td>
                             <td v-show="flagCollect.operationFlag == 2">
                                 <div><span class="event" v-on:click="deleteRow($event,index)"
@@ -216,41 +216,41 @@
                             <td><span class="event">{{index+1}}</span></td>
                             <td>
                                 <div><input class="form-control" value="" placeholder="请输入商品编号" v-on:change="addRow"
-                                            v-model="item.goods_serial_number"
+                                            v-model="item.goodsSerialNumber"
                                             v-bind:disabled="!dataUpdateFlag">
                                 </div>
                             </td>
                             <td>
-                                <div>{{item.goods_name}}</div>
+                                <div>{{item.goodsName}}</div>
                             </td>
                             <td>
-                                <div>{{item.order_pack}}</div>
+                                <div>{{item.orderPack}}</div>
                             </td>
                             <td>
                                 <div><input type="number" step="0.01" class="form-control" value=""
                                             placeholder="支持小数点2位"
-                                            v-model="item.order_number"
+                                            v-model="item.orderNumber"
                                             v-bind:disabled="!dataUpdateFlag">
                                 </div>
                             </td>
                             <td>
-                                <div>{{item.repertory_unit}}</div>
+                                <div>{{item.repertoryUnit}}</div>
                             </td>
                             <td>
-                                <div>{{item.repertory_number}}</div>
+                                <div>{{item.repertoryNumber}}</div>
                             </td>
                             <td>
-                                <div>{{item.tax_rate}}</div>
+                                <div>{{item.taxRate}}</div>
                             </td>
                             <td>
-                                <div>{{item.tax_included_pay}}</div>
+                                <div>{{item.taxIncludedPay}}</div>
                             </td>
                             <td>
-                                <div>{{item.tax_included_amount}}</div>
+                                <div>{{item.taxIncludedAmount}}</div>
                             </td>
                             <td>
                                 <div>
-                                    <div><select class="form-control" v-model="item.cancel_reason">
+                                    <div><select class="form-control" v-model="item.cancelReason">
                                         <option value="B1">高库存退货</option>
                                         <option value="B2">促销品退货</option>
                                         <option value="B3">残次品退货</option>
@@ -291,25 +291,29 @@
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>制单人</label>
                         <div class="base-form-content clearfix">
-                            <input type="text" class="form-control" placeholder="请填写制单人" disabled/>
+                            <input type="text" class="form-control" placeholder="请填写制单人" disabled
+                                   v-model="orderData.preparedByPeople"/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>制单时间</label>
                         <div class="base-form-content clearfix">
-                            <input type="text" class="form-control" placeholder="请填写制单时间" disabled/>
+                            <input type="text" class="form-control" placeholder="请填写制单时间" disabled
+                                   v-model="orderData.preparedByTime"/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>审核人</label>
                         <div class="base-form-content clearfix">
-                            <input type="text" class="form-control" placeholder="请填写审核人" disabled/>
+                            <input type="text" class="form-control" placeholder="请填写审核人" disabled
+                                   v-model="orderData.auditByPeople"/>
                         </div>
                     </div>
                     <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <label class="control-label"><span class="font-error"></span>审核时间</label>
                         <div class="base-form-content clearfix">
-                            <input type="text" class="form-control" placeholder="请填写审核时间" disabled/>
+                            <input type="text" class="form-control" placeholder="请填写审核时间" disabled
+                                   v-model="orderData.auditByTime"/>
                         </div>
                     </div>
                 </div>

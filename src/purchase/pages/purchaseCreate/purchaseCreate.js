@@ -51,6 +51,7 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                 //行数据信息
                 //TODO 初始化数据,后面要修改,这里是便于测试用
                 var orderData = {
+                    order_id:_fn.guid(),
                     classSelected: "P01",
                     statusSelected: 0,
                     supplier_bh: "11111",// '供应商编号',
@@ -468,13 +469,14 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
         convertParams: function (order, pageNo, pageSize) {
             //转译字段名称,订单基本信息
             var purchaseOrderMain = {
-                orderId: order.orderId,
+                orderId: order.order_id,
                 orderStatusCode: order.statusSelected,
                 supplierBh: order.supplier_bh,
                 orderGoodsAddress: order.order_goods_address,
                 orderGoodsDate: order.order_goods_date,
                 predictDate: order.predict_date,
                 urgenFlag: order.urgen_flag === false ? 0 : 1,
+                orderClass:order.classSelected,
 
                 pageNo: pageNo,
                 pageSize: pageSize,
@@ -531,6 +533,13 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
 
             return result;
 
+        },
+        guid:function (){
+            function S4() {
+                return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+            }
+            // return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+            return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4());
         }
     };
     return page;

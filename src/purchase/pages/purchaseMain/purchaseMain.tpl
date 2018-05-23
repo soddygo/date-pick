@@ -13,7 +13,7 @@
             <div class="stage-search">
                 <!--<button class="btn btn-outline J_search_btn">查询</button>-->
                 <button class="btn btn-outline J_create_btn" v-on:click="createOrder">新增</button>
-                <button class="btn btn-outline J_query_btn" v-on:click="dbClickView" v-bind:disabled="lookButtonFlag">查看</button>
+                <button class="btn btn-outline J_query_btn" v-on:click="lookClickView" v-bind:disabled="lookButtonFlag">查看</button>
                 <!--<button class="btn btn-outline J_update_btn">修改</button>-->
                 <button class="btn btn-outline J_delete_btn" v-on:click="deleteRow" v-bind:disabled="deleteButtonFlag">删除</button>
                 <button class="btn btn-outline J_audit_btn"  v-bind:disabled="auditButtonFlag">审核</button>
@@ -106,8 +106,7 @@
                         <!--行模块：内容-->
                         <div class="base-form-content clearfix">
                             <div class="switch-inline">
-                                <input type="checkbox" id="switch_urgenFlag" v-model="order.urgenFlag"
-                                       v-on:click="testClick">
+                                <input type="checkbox" id="switch_urgenFlag" v-model="order.urgenFlag">
                                 <label for="switch_urgenFlag">
                                     <span>加急订单</span>
                                     <span>非加急订单</span>
@@ -161,16 +160,16 @@
                         <tr v-on:dblclick="dbClickView($event,item.orderId)">
                             <td>
                                 <div class="checkbox">
-                                    <input type="checkbox" v-bind:id="item.orderId" v-bind:value="item.orderId"
+                                    <input type="checkbox" v-bind:id="item.id" v-bind:value="item.orderId"
                                            v-model="orderRowChecked">
-                                    <label v-bind:for="item.orderId"></label>
+                                    <label v-bind:for="item.id"></label>
                                 </div>
                             </td>
                             <td>
                                 <div>{{item.orderId}}</div>
                             </td>
                             <td>
-                                <div>{{item.orderClassName}}</div>
+                                <div>{{item.orderClass | classTypeFilter}}</div>
                             </td>
                             <td>
                                 <div>{{item.supplierName}}</div>
