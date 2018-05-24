@@ -250,7 +250,7 @@
                             </td>
                             <td>
                                 <div>
-                                    <div><select class="form-control" v-model="item.cancelReason">
+                                    <div><select class="form-control" v-model="item.cancelReason" v-bind:disabled="!dataUpdateFlag">
                                         <option value="B1">高库存退货</option>
                                         <option value="B2">促销品退货</option>
                                         <option value="B3">残次品退货</option>

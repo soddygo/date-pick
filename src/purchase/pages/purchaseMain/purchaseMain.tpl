@@ -16,7 +16,7 @@
                 <button class="btn btn-outline J_query_btn" v-on:click="lookClickView" v-bind:disabled="lookButtonFlag">查看</button>
                 <!--<button class="btn btn-outline J_update_btn">修改</button>-->
                 <button class="btn btn-outline J_delete_btn" v-on:click="deleteRow" v-bind:disabled="deleteButtonFlag">删除</button>
-                <button class="btn btn-outline J_audit_btn"  v-bind:disabled="auditButtonFlag">审核</button>
+                <button class="btn btn-outline J_audit_btn"  v-on:click="audit"  v-bind:disabled="auditButtonFlag">审核</button>
             </div>
 
 

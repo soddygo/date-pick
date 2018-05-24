@@ -166,7 +166,7 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
                 //新增采购订单,或者采购退单
                 createOrder: function (event) {
                     //主界面,不需要验证是否有数据未保存
-                    kayak.router.go('#full/purchase/purchaseCreate:classSelected=' + (this.order.classSelected === "all" ? "P01" : this.order.classSelected))
+                    kayak.router.go('#full/purchase/purchaseCreate:orderClass=' + (this.order.classSelected === "all" ? "P01" : this.order.classSelected))
                 },
                 //删除订单
                 deleteRow: function (event) {
@@ -276,6 +276,22 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
 
                         });
                     }
+
+                },
+                audit: function (event) {
+                    var tempOrderRowChecked = this.orderRowChecked;
+
+                    var orderIds = tempOrderRowChecked.join(",");
+                    // 审核
+                    MINIPOP.show({
+                        title: '提示',
+                        msg: '您好,已选择多个订单,是否确认多个订单审核通过!',
+                        callback: function (el, type) {
+                            if (type === 'ok') {
+                                _fn.auditByOrderId(orderIds);
+                            }
+                        }
+                    });
 
                 },
                 initPageWidget: function (totalCount, url) {
@@ -419,6 +435,28 @@ define('purchase/pages/purchaseMain/purchaseMain', function (require, exports, m
 
             // return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
             return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4());
+        },
+        //审核,orderIds 多个用逗号分隔
+        auditByOrderId: function (orderIds) {
+            cabin.widgets.loading.show();
+            ajax.post(ajax.auditByOrderId, {orderId: orderIds}, function (res) {
+                cabin.widgets.loading.hide();
+                if (res.code && "code" === res.code) {
+                    //审核成功
+                    MINIPOP.show({
+                        title: '提示',
+                        msg: '审核成功',
+                        cancel: '确定'
+                    });
+                } else {
+                    //审核成功
+                    MINIPOP.show({
+                        title: '提示',
+                        msg: '审核成功',
+                        cancel: '确定'
+                    });
+                }
+            });
         }
     };
     return page;

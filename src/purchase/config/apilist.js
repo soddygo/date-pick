@@ -18,6 +18,8 @@ define('purchase/config/apilist', function (require, exports, module) {
         queryOneView: "/purchaseCollect/queryByOrderId",//根据订单id,查询订单基本信息(一条),和多条商品明细
         updateOrInsertById: "/purchaseCollect/updateOrInsertById",//订单下面的商品明细,新增修改,删除操作
 
+        auditByOrderId: "/purchaseCollect/auditByOrderId",//审核操作,修改为审核状态
+
         searchOrderMain: "/purchaseOrderMain/search",//订单基本信息搜索,从订单基本信息里搜索
         searchOrderGoods: "/purchaseCollect/searchOrderGoods",//订单基本信息搜索,从商品明细表里搜索
         insertOrder:"/purchaseCollect/insertOrder",//新增订单信息保存

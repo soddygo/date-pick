@@ -66,8 +66,14 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
 
                 };
                 //订单下面的,商品明细
-                var rowData = [];//新增的商品明细
-                var originRowData = [];//原本的商品明细,不允许删除,只能修改商品编号和数量
+                var rowData = [];
+
+                //分页信息
+                var page = {
+                    currentPage: 1,
+                    pageSize: 30,
+                    totalCount: 0,
+                };
 
                 return {
                     rowData: rowData,
@@ -75,6 +81,7 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     flagCollect: flagCollect,
                     orderClass: orderClass,
                     orderStatus: orderStatus,
+                    page: page,
                 }
             },
             mounted: function () {
@@ -95,6 +102,7 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                 // this.orderData.order_id = params.orderId;
                 cabin.widgets.loading.show();
                 var orderData = this.orderData;
+                this.orderData.orderId = params.orderId;//分页更改时查询中获取订单编号
                 var rowData = this.rowData;
 
                 var request = {
@@ -103,6 +111,9 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     pageSize: 30,
 
                 };
+
+                var initPageWidget = this.$options.methods.initPageWidget.bind(this);
+
                 ajax.post(ajax.queryOneView, JSON.stringify(request), function (res) {
                     cabin.widgets.loading.hide();
                     var tempOrderData = res.data.purchaseOrderMain;//查询到订单信息
@@ -110,33 +121,21 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                         orderData[key] = tempOrderData[key];
                     }
                     //todo 加急订单的标记,从0,1转成false,true
-                    console.log("orderData:" + JSON.stringify(orderData));
                     var tempArr = res.data.goodsOrder.result;
 
                     rowData.splice(0, rowData.length);//清空数据
                     for (var i = 0, j = tempArr.length; i < j; i++) {
                         rowData.push(tempArr[i]);
                     }
-                },"application/json;charset=UTF-8");
+
+                    //分页初始化
+                    initPageWidget(res.data.goodsOrder.totalCount, ajax.queryOneView);
+                }, "application/json;charset=UTF-8");
 
                 //init datePick
                 //current date
                 var currentDateStr = moment().format('YYYY-MM-DD');
                 console.log("currentDateStr:" + currentDateStr);
-
-                //分页初始化
-                $('#page').NextPage({
-                    pageSize: 30, //每页大小,
-                    currentPage: 1, //当前页
-                    totalCount: 200, //总条数
-                    pageRange: 9, //间隔多少个
-                    select: [30, 60, 100], //下拉选项
-                    showTotal: false,//显示总条数 boolean
-                    position: null, //位置 left right center
-                    callback: function (data) {
-                        //todo
-                    }
-                });
             },
             //如果 不需要保存页面状态必须添加下面这个方法
             beforeDestroy: function () {
@@ -188,14 +187,20 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     //todo
                     cabin.widgets.loading.show();
 
+                    //去掉最后一行空白新增行
+                    this.rowData.splice(this.rowData.length - 1, 1);
                     var request = {
                         orderClass: this.orderData.orderClass,
                         orderId: this.orderData.orderId,
                         rowData: this.rowData
                     };
 
+                    var flagCollect = this.flagCollect;
                     ajax.post(ajax.updateOrInsertById, JSON.stringify(request), function (res) {
                         cabin.widgets.loading.hide();
+                        //页面状态改为查看
+                        flagCollect.operationFlag = 1;//查看状态下,不能点击保存,2:编辑模式;1:查看
+
 
                     }, "application/json;charset=UTF-8");
                 },
@@ -209,7 +214,56 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     }
                 },
                 audit: function (event) {
-                    //TODO
+                    var orderId = this.orderData.orderId;
+                    var orderStatusCode = this.orderData.orderStatusCode;
+                    if (orderStatusCode !== 1) {
+                        MINIPOP.show({
+                            title: '提示',
+                            msg: '改订单非[已保存]状态,不允许审核!',
+                            cancel: '确认'
+                        });
+                    } else {
+                        //1. 檢查是否存在未保存数据
+                        if (this.flagCollect.hasSaveFlag === 2) {
+                            //有未保存的数据
+                            MINIPOP.show({
+                                title: '警告',
+                                msg: "当前界面信息未保存,是否继续审核?",
+                                ok: '确认',
+                                cancel: '取消',
+                                sort: 'right', //left(默认为left):cancel按钮在左，ok按钮在右,right:cancel按钮在右，ok按钮在左
+                                callback: function (el, type) {
+                                    if (type === 'ok') {
+                                        //审核
+                                        MINIPOP.show({
+                                            title: '提示',
+                                            msg: '确认该订单审核通过?',
+                                            callback: function (el, type) {
+                                                if (type === 'ok') {
+                                                    _fn.auditByOrderId(orderId);
+                                                }
+                                            }
+                                        });
+                                    } else if (type === 'cancel') {
+                                        //无操作,停留当前界面
+                                    }
+                                }
+                            });
+                        } else {
+                            // 审核
+                            MINIPOP.show({
+                                title: '提示',
+                                msg: '确认该订单审核通过?',
+                                callback: function (el, type) {
+                                    if (type === 'ok') {
+                                        _fn.auditByOrderId(orderId);
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+
                 },
 
                 deleteRow: function (event, index) {
@@ -232,6 +286,46 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                         console.log("index:" + index);
                         this.rowData.splice(index, 1);
                     }
+                },
+                initPageWidget: function (totalCount, url) {
+                    var orderData = this.orderData;
+                    var rowData = this.rowData;
+                    var page = this.page;
+                    page.totalCount = totalCount;
+
+                    //分页初始化
+                    $('#page').NextPage({
+                        pageSize: page.pageSize, //每页大小,
+                        currentPage: page.currentPage, //当前页
+                        totalCount: totalCount, //总条数
+                        pageRange: 9, //间隔多少个
+                        select: [30, 60, 100], //下拉选项
+                        showTotal: true,//显示总条数 boolean
+                        position: "right", //位置 left right center
+                        callback: function (data, isNextPage) {
+                            page.currentPage = data.currentPage;
+                            page.pageSize = data.pageSize;
+
+                            var requestParam = {
+                                orderId: orderData.orderId,
+                                pageNo: page.currentPage,
+                                pageSize: page.pageSize,
+
+                            };
+
+                            cabin.widgets.loading.show();
+                            rowData.splice(0, rowData.length);//清空数据
+
+                            //请求后台数据
+                            ajax.post(url, JSON.stringify(requestParam), function (res) {
+
+                                for (var key in res.data.goodsOrder.result) {
+                                    rowData.push(res.data.goodsOrder.result[key]);
+                                }
+                                cabin.widgets.loading.hide();
+                            }, "application/json;charset=UTF-8");
+                        }
+                    });
                 }
 
             },
@@ -295,6 +389,28 @@ define('purchase/pages/purchaseView/purchaseView', function (require, exports, m
                     } else if (type === 'cancel') {
                         //无操作,停留当前界面
                     }
+                }
+            });
+        },
+        //审核,orderIds 多个用逗号分隔
+        auditByOrderId: function (orderIds) {
+            cabin.widgets.loading.show();
+            ajax.post(ajax.auditByOrderId, {orderId: orderIds}, function (res) {
+                cabin.widgets.loading.hide();
+                if (res.code && "code" === res.code) {
+                    //审核成功
+                    MINIPOP.show({
+                        title: '提示',
+                        msg: '审核成功',
+                        cancel: '确定'
+                    });
+                } else {
+                    //审核成功
+                    MINIPOP.show({
+                        title: '提示',
+                        msg: '审核成功',
+                        cancel: '确定'
+                    });
                 }
             });
         }

@@ -51,58 +51,30 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                 //行数据信息
                 //TODO 初始化数据,后面要修改,这里是便于测试用
                 var orderData = {
-                    order_id:_fn.guid(),
-                    classSelected: "P01",
-                    statusSelected: 0,
-                    supplier_bh: "11111",// '供应商编号',
-                    supplier_name: "test测试",//'供应商名称',
-                    order_goods_address: "test",//'订货地点',
-                    order_goods_date: "",// '订货日期',
-                    urgen_flag: false,//'加急订单标记',
-                    predict_date: "",// '预计到货日期',
+                    orderId: _fn.guid(),
+                    orderClass: "P01",
+                    orderStatusCode: 0,
+                    supplierBh: "11111",// '供应商编号',
+                    supplierName: "test测试",//'供应商名称',
+                    orderGoodsAddress: "test",//'订货地点',
+                    orderGoodsDate: "",// '订货日期',
+                    urgenFlag: false,//'加急订单标记',
+                    predictDate: "",// '预计到货日期',
 
                 };
                 //订单下面的,商品明细
                 var rowData = [];
-                //商品明细-采购订单
-                var defaultRowDataInfo = {
-                    goods_serial_number: "",//    '商品编号',
-                    goods_name: "",//    '商品名称',
-                    order_pack: "",//    '订货包装',
-                    order_number: 0,//     '订货数量',
-                    repertory_unit: "",//    '库存单位',
-                    repertory_number: "",//     '库存单位数量',
-                    gift: false,//    '赠品',
-                    tax_rate: "",//    '税率',
-                    tax_included_pay: "",//    '含税进价',
-                    tax_included_amount: "",//    '含税金额',
-                    goods_bar_code: "",//    '商品条码',
-                    allow_excess: false,//    '允许超收标记',
-                    excess_ratio: "",//   '超收比例',
-                };
-                //商品明细-采购退单
-                var defaultRowDataCancelInfo = {
-                    goods_serial_number: "",// comment '商品编号',
-                    goods_name: "",// comment '商品名称',
-                    order_pack: "",// comment '订货包装',
-                    order_number: 0,// comment '订货数量',
-                    repertory_unit: "",// comment '库存单位',
-                    repertory_number: "",// comment '库存单位数量',
-                    gift: "",// comment '赠品',
-                    tax_rate: "",// comment '税率',
-                    tax_included_pay: "",// comment '含税进价',
-                    tax_included_amount: "",// comment '含税退货金额',
-                    cancel_reason_code: "",// comment '退货原因代码',
-                    cancel_reason: "",// comment '退货原因',
+                //供应商搜索用
+                var supplySearch=[
+                    {key: 0, value: "test"},
+                ];
+                var supplySearchOptions={
+                    no_results_text: '没有找到',
+                    search_contains: true, //关键字模糊搜索，设置为false，则只从开头开始匹配
+                    max_selected_options: 1, //当select为多选时，最多选择个数
+                    width: "300px",
                 };
 
-                //表单验证控制
-                var formFlag = {
-                    supplier_bh_flag: false,//供应商
-                    rowData_error_flag: [],//商品明细错误索引
-                    goods_serial_number_flag: false,//商品编号
-                    order_number_flag: false,//商品订货数量
-                };
 
                 return {
                     orderData: orderData,
@@ -110,9 +82,8 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                     flagCollect: flagCollect,
                     orderClass: orderClass,
                     orderStatus: orderStatus,
-                    defaultRowDataInfo: defaultRowDataInfo,
-                    defaultRowDataCancelInfo: defaultRowDataCancelInfo,
-                    formFlag: formFlag,
+                    supplySearch: supplySearch,
+                    supplySearchOptions: supplySearchOptions,
                 }
             },
             mounted: function () {
@@ -129,8 +100,7 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
 
                 //获取入参
                 var params = kayak.router.requestParam;
-                console.log("params:" + JSON.stringify(params));
-                this.orderData.classSelected = params.classSelected;
+                this.orderData.orderClass = params.orderClass;
 
                 //预计到货日期初始化
                 $('#predict_date_id').PdDatePicker({
@@ -141,60 +111,14 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                     //containerId: 'abc'
                 }).on('change', function (evt, data) {
                     var date = moment(data).format('YYYY-MM-DD');
-                    orderData.predict_date = date;
+                    orderData.predictDate = date;
                 });
 
                 //初始化新增订单信息
-                orderData['order_goods_date'] = moment().format('YYYY-MM-DD');//订货日期,默认当前日期,不可修改
+                orderData['orderGoodsDate'] = moment().format('YYYY-MM-DD');//订货日期,默认当前日期,不可修改
 
-                //分页初始化
-                $('#page').NextPage({
-                    pageSize: 30, //每页大小,
-                    currentPage: 1, //当前页
-                    totalCount: 200, //总条数
-                    pageRange: 9, //间隔多少个
-                    select: [30, 60, 100], //下拉选项
-                    showTotal: false,//显示总条数 boolean
-                    position: "right", //位置 left right center
-                    callback: function (data) {
-                    }
-                });
-
-                //商品明细,添加测试数据
-                var temp1 = {
-                    goods_serial_number: "商品编号1",//    '商品编号',
-                    goods_name: "商品名称1111",//    '商品名称',
-                    order_pack: "订购包装1",//    '订货包装',
-                    order_number: 12.01,//     '订货数量',
-                    repertory_unit: "KG",//    '库存单位',
-                    repertory_number: "11",//     '库存单位数量',
-                    gift: false,//    '赠品',
-                    tax_rate: "10.78%",//    '税率',
-                    tax_included_pay: "222",//    '含税进价',
-                    tax_included_amount: "11",//    '含税金额',
-                    goods_bar_code: "112",//    '商品条码',
-                    allow_excess: false,//    '允许超收标记',
-                    excess_ratio: "10%",//   '超收比例',
-                };
-                var temp2 = {
-                    goods_serial_number: "商品编号2",//    '商品编号',
-                    goods_name: "商品名称1111",//    '商品名称',
-                    order_pack: "订购包装1",//    '订货包装',
-                    order_number: 12.01,//     '订货数量',
-                    repertory_unit: "KG",//    '库存单位',
-                    repertory_number: "22",//     '库存单位数量',
-                    gift: false,//    '赠品',
-                    tax_rate: "10.34%",//    '税率',
-                    tax_included_pay: "123",//    '含税进价',
-                    tax_included_amount: "1123",//    '含税金额',
-                    goods_bar_code: "111",//    '商品条码',
-                    allow_excess: false,//    '允许超收标记',
-                    excess_ratio: "",//   '超收比例',
-                }
-                this.rowData.push(temp1);
-                this.rowData.push(temp2);
-                // rowData 末尾空表航
-                this.rowData.push({goods_serial_number: "", order_number: 0});
+                // rowData 末尾空行
+                this.rowData.push({goodsSerialNumber: "", orderNumber: 0});
 
                 var checkedFlag = this.$options.methods.checkedSaveInfo.bind(this)();
 
@@ -227,10 +151,11 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                     this.flagCollect.hasSaveFlag = 1
                     //todo
                     //1. 订单基本信息
-                    var orderData = _fn.convertParams(this.orderData);
-                    var _rowData = {};
+                    var orderData = this.orderData;
                     var rowData = this.rowData;
-                    var classSelected = this.orderData.classSelected;
+                    var orderClass = this.orderData.orderClass;
+
+                    var clearPageData = this.$options.methods.clearPageData.bind(this);
 
                     //校验
                     /**
@@ -246,28 +171,22 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                                 //这里进行表单提交后端
                                 if (data.isValid) {
 
-                                    if ("P01" === classSelected || "P02" === classSelected) {
-                                        _rowData = _fn.covertGoodsParams(rowData);
-
-                                    } else if ("P03" === classSelected || "P04" === classSelected) {
-                                        _rowData = _fn.convertGoodsCancelParams(rowData);
-
-                                    } else {
-                                        console.error("订单类型错误!")
+                                    var tempRowData = [];
+                                    //最后一行用于新增的空白行,不要
+                                    for (var i = 0, j = rowData.length; i < j; i++) {
+                                        var temp = $.extend(rowData[i], orderData);//继承基本属性
+                                        if (i < j - 1) {
+                                            tempRowData.push(temp)
+                                        } else if (temp.goodsSerialNumber && temp.goodsSerialNumber !== "") {
+                                            tempRowData.push(temp)
+                                        }
                                     }
-
-                                    for (var i = 0; i < _rowData.length; i++) {
-                                        _rowData[i] = $.extend(_rowData[i], orderData);//继承基本属性
-                                    }
-
-
                                     //参数汇总
                                     var requestParams = {
                                         orderData: orderData,
-                                        rowData: _rowData,
-                                        orderType: classSelected
+                                        rowData: tempRowData,
+                                        orderType: orderClass
                                     };
-
                                     var requestJson = JSON.stringify(requestParams);
                                     cabin.widgets.loading.show();
 
@@ -281,6 +200,8 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                                                 msg: '保存成功',
                                                 cancel: '确认'
                                             });
+                                            // 清理当前页面数据 方便重新添加数据 clearPageData
+                                            clearPageData();
                                         } else {
                                             //失败
                                             MINIPOP.show({
@@ -318,7 +239,11 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                     $(this.$el).find('#J_valid_table').validator({
                         type: 'pop', data: [
                             {validType: 'goods_serial_number', valid: 'isNonEmpty', errorMsg: '不能为空'},
-                            {validType: 'order_number', valid: 'isNonEmpty||isDecimal:2', errorMsg: '不能为空||只能输入数值且保留两位小数'},
+                            {
+                                validType: 'order_number',
+                                valid: 'isNonEmpty||isDecimal:2',
+                                errorMsg: '不能为空||只能输入数值且保留两位小数'
+                            },
                         ]
                     });
 
@@ -326,7 +251,7 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                 },
                 //返回操作
                 reback: function (event) {
-                    var url = '#full/purchase/purchaseMain:classSelected=' + this.rowData.classSelected;
+                    var url = '#full/purchase/purchaseMain:orderClass=' + this.rowData.orderClass;
                     if (this.flagCollect.hasSaveFlag === 2) {
                         //有未保存的数据
                         _fn.exitCurrentPage("当前界面信息未保存,是否放弃并返回?", url);
@@ -338,23 +263,10 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                 addRow: function (event) {
                     //判断是否已有最后一行空白行
                     var temp = this.rowData[this.rowData.length - 1];
-                    if (temp && (typeof temp.goods_serial_number !== "undefined") && temp.goods_serial_number.length === 0) {
+                    if (temp && (typeof temp.goodsSerialNumber !== "undefined") && temp.goodsSerialNumber.length === 0) {
                         //不需要增加新的空白,已有一个空白行了
                     } else {
-                        this.rowData.push({goods_serial_number: "", order_number: 0});//添加空白数据
-
-                        // //判断当前是订单,还退单
-                        // if (this.orderData.classSelected === "P01" || this.orderData.classSelected === "P02") {
-                        //     //订单
-                        //     var blankObj = $.extend({}, this.defaultRowDataInfo);
-                        //     this. rowData.push(blankObj)
-                        // } else if (this.orderData.classSelected === "P03" || this.orderData.classSelected === "P04") {
-                        //     //退单
-                        //     var blankObj = $.extend({}, this.defaultRowDataCancelInfo);
-                        //     this.rowData.push(blankObj)
-                        // } else {
-                        //     this. rowData.push({goods_serial_number: "", order_number: 0});//添加空白数据
-                        // }
+                        this.rowData.push({goodsSerialNumber: "", orderNumber: 0});//添加空白数据
                     }
                 },
                 deleteRow: function (event, index) {
@@ -377,39 +289,30 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                         this.rowData.splice(index, 1);
                     }
                 },
-                initPageWidget: function (totalCount, url) {
-                    var page = this.page;
-                    var order = this.order;
-                    var orderRow = this.orderRow;
+                //清理当前页面数据,用于重新添加订单
+                clearPageData: function () {
 
-                    page.totalCount = totalCount;
+                    this.orderData.orderId = _fn.guid();
+                    // this.orderData.orderClass = this.orderData.orderClass;
+                    this.orderData.orderStatusCode = 0;
+                    this.orderData.supplierBh = "";
+                    this.orderData.supplierName = "";
+                    // this.orderData.orderGoodsAddress = "";
+                    this.orderData.orderGoodsDate = moment().format('YYYY-MM-DD');
+                    this.orderData.predictDate = "";
+                    this.orderData.urgenFlag = false;
 
-                    //分页初始化
-                    $('#page').NextPage({
-                        pageSize: page.pageSize, //每页大小,
-                        currentPage: page.currentPage, //当前页
-                        totalCount: totalCount, //总条数
-                        pageRange: 9, //间隔多少个
-                        select: [30, 60, 100], //下拉选项
-                        showTotal: true,//显示总条数 boolean
-                        position: "right", //位置 left right center
-                        callback: function (data, isNextPage) {
-                            page.currentPage = data.currentPage;
-                            page.pageSize = data.pageSize;
+                    this.rowData.splice(0, this.rowData.length);//清空数据
+                    // rowData 末尾空行,用于添加数据用
+                    this.rowData.push({goodsSerialNumber: "", orderNumber: 0});
 
-                            var purchaseOrderMain = _fn.convertParams(order, page.currentPage, page.pageSize);
-                            cabin.widgets.loading.show();
-                            orderRow.splice(0, orderRow.length);//清空数据
 
-                            //请求后台数据
-                            ajax.post(url, purchaseOrderMain, function (res) {
-                                for (var key in res.data.result) {
-                                    orderRow.push(res.data.result[key]);
-                                }
-                                cabin.widgets.loading.hide();
-                            });
-                        }
-                    });
+                    this.flagCollect.hasSaveFlag = 2;//修改标记,有未保存数据
+
+                },
+                supplySearch:function (event) {
+                    //todo 请求后台获取供应商信息
+                    console.log("supplySearch");
                 }
             },
             computed: {
@@ -417,18 +320,18 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                 orderTableFlag: function () {
                     //采购订单,和采购退单的table列表切换
                     //        orderTableFlag: 1,//1:采购订单显示;2:采购退单显示
-                    if (this.orderData.classSelected === "P01") {
+                    if (this.orderData.orderClass === "P01") {
                         return 1;
-                    } else if (this.orderData.classSelected === "P02") {
+                    } else if (this.orderData.orderClass === "P02") {
                         return 1;
-                    } else if (this.orderData.classSelected === "P03") {
+                    } else if (this.orderData.orderClass === "P03") {
                         return 2;
-                    } else if (this.orderData.classSelected === "P04") {
+                    } else if (this.orderData.orderClass === "P04") {
                         return 2;
-                    } else if (this.orderData.classSelected === "P05") {
+                    } else if (this.orderData.orderClass === "P05") {
                         //第一期无此业务
                         return 0;
-                    } else if (this.orderData.classSelected === "P06") {
+                    } else if (this.orderData.orderClass === "P06") {
                         //走其他系统处理,不走此系统
                         return 0;
                     } else {
@@ -465,81 +368,13 @@ define('purchase/pages/purchaseCreate/purchaseCreate', function (require, export
                 }
             });
         },
-        //订单基本信息转换
-        convertParams: function (order, pageNo, pageSize) {
-            //转译字段名称,订单基本信息
-            var purchaseOrderMain = {
-                orderId: order.order_id,
-                orderStatusCode: order.statusSelected,
-                supplierBh: order.supplier_bh,
-                orderGoodsAddress: order.order_goods_address,
-                orderGoodsDate: order.order_goods_date,
-                predictDate: order.predict_date,
-                urgenFlag: order.urgen_flag === false ? 0 : 1,
-                orderClass:order.classSelected,
-
-                pageNo: pageNo,
-                pageSize: pageSize,
-
-            };
-            return purchaseOrderMain;
-        },
-        covertGoodsParams: function (rowData) {
-
-            var result = [];
-            for (var i = 0, j = rowData.length; i < j; i++) {
-                //采购订单,字段转换
-                var purchaseOrder = {
-                    goodsSerialNumber: rowData.goods_serial_number,
-                    goodsName: rowData.goods_name,
-                    orderPack: rowData.order_pack,
-                    orderNumber: rowData.order_number,
-                    repertoryUnit: rowData.repertory_unit,
-                    repertoryNumber: rowData.repertory_number,
-                    gift: rowData.gift,
-                    taxRate: rowData.tax_rate,
-                    taxIncludedPay: rowData.tax_included_pay,
-                    taxIncludedAmount: rowData.tax_included_amount,
-                    goodsBarCode: rowData.goods_bar_code,
-                    allowExcess: rowData.allow_excess,
-                    excessRatio: rowData.excess_ratio,
-
-                }
-                result.push(purchaseOrder);
-            }
-
-            return result;
-
-        },
-        convertGoodsCancelParams: function (rowData) {
-            var result = [];
-            for (var i = 0, j = rowData.length; i < j; i++) {
-                //采购退单,字段转换
-                var purchaseOrderCancel = {
-                    goodsSerialNumber: rowData.goods_serial_number,
-                    goodsName: rowData.goods_name,
-                    orderPack: rowData.order_pack,
-                    orderNumber: rowData.order_number,
-                    repertoryUnit: rowData.repertory_unit,
-                    repertoryNumber: rowData.repertory_number,
-                    taxRate: rowData.tax_rate,
-                    taxIncludedPay: rowData.tax_included_pay,
-                    taxIncludedAmount: rowData.tax_included_amount,
-                    cancelReasonCode: rowData.cancel_reason,
-                };
-                result.push(purchaseOrderCancel);
-            }
-
-
-            return result;
-
-        },
-        guid:function (){
+        guid: function () {
             function S4() {
-                return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+                return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
             }
+
             // return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
-            return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4());
+            return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4());
         }
     };
     return page;
