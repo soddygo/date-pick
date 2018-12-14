@@ -2,6 +2,31 @@
 
 > 封装cabin时间范围插件
 
+## 插件打包
+ 
+ ```node
+ npm run build
+ ```
+ 
+ ## 编译后的文件修改
+ 
+ 路径:dist/datePick.js
+ 
+ 引入方式修改:
+ 
+ ```
+ define('privilege/common/plugins/datePick', function (require, exports, module) {
+        module.exports = t(require('cabin/lib/daterangepicker/moment'), require('cabin/lib/daterangepicker/daterangepicker'))
+    })
+```
+
+使用方引入:
+
+```javascript
+    var DatePick = require('privilege/common/plugins/datePick').default;
+
+```
+
 ## Build Setup
 
 ``` bash
