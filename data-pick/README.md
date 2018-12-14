@@ -5,7 +5,7 @@
 ## 插件打包
  
  ```node
- npm run build
+ npm run build2
  ```
  
  ## 编译后的文件修改
