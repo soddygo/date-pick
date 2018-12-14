@@ -1,13 +1,7 @@
 <template>
-  <!--<div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">-->
-  <!--<label class="control-label">test</label>-->
-  <!--&lt;!&ndash;<input type="text" class="form-control"  v-bind:value="msg"/>&ndash;&gt;-->
-  <!--<div class="base-form-content clearfix">-->
-  <!--<input type="text" class="form-control" v-bind:value="goodsDateStart"/>-->
-  <!--</div>-->
-  <!--</div>-->
-  <input type="text" class="form-control" placeholder="订货日期"
-
+  <input type="text" class="form-control"
+         v-bind:placeholder="placeholder"
+         v-bind:value="rangeDate"
   />
 </template>
 
@@ -18,33 +12,62 @@ import 'cabin/lib/daterangepicker/daterangepicker'
 
 export default {
   name: 'DatePick',
+  props: [
+    'value',
+    'placeholder',
+    'startDate',
+    'endDate',
+    'format'
+  ],
+  model: {
+    prop: 'value',
+    event: 'update'
+  },
   data () {
     let pickInfo = {
-      rangeDate: '2018',
       startDate: '',
       endDate: ''
     }
     let params = {
       name: '',
-      placeholder: ''
+      defaultPlaceholder: '',
+      defaultFormat: 'YYYY-MM-DD'
     }
 
     return {
       pickInfo,
       params,
-      goodsDateStart: moment(), // 订货日期开始
 
       msg: 'Welcome to Your Vue.js App test'
     }
   },
-  props: [
-    'value'
-  ],
+  computed: {
+    rangeDate () {
+      return this.value
+    }
+  },
+
   mounted: function () {
     var pickInfo = this.pickInfo
+    var rangeDate = this.rangeDate
+    var defaultFormat = this.params.defaultFormat
 
-    var start = moment().startOf('day').subtract(0, 'days')
-    var end = moment().endOf('day').subtract(0, 'days')
+    var start = null
+    var end = null
+    if (this.startDate == null || typeof this.startDate === 'undefined' ||
+      this.endDate == null || typeof this.endDate === 'undefined') {
+      start = moment().startOf('day').subtract(0, 'days')
+      end = moment().endOf('day').subtract(0, 'days')
+    } else {
+      start = this.startDate
+      end = this.endDate
+    }
+
+    if (this.format != null && !(typeof this.format === 'undefined')) {
+      defaultFormat = this.format
+    }
+
+    var Vue = this
 
     $(this.$el).daterangepicker({
       startDate: start,
@@ -68,16 +91,17 @@ export default {
         daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
         monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
         firstDay: 1,
-        format: 'YYYY-MM-DD' // 控件中from和to 显示的日期格式
+        format: defaultFormat // 控件中from和to 显示的日期格式
       }
     },
     function (start, end, label) {
       // 格式化日期显示框,展示用
-      // pickInfo.rangeDate = start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD')
-      //
-      // //传送后台用
-      // order.goodsDateStart = start.startOf('day').format('YYYY-MM-DD');
-      // order.goodsDateEnd = end.endOf('day').format('YYYY-MM-DD');
+      pickInfo.startDate = start.format(defaultFormat)
+      pickInfo.endDate = end.format(defaultFormat)
+
+      rangeDate = pickInfo.startDate + ' - ' + pickInfo.endDate
+      // console.log('选择后的时间范围value:' + value)
+      Vue.$emit('update', pickInfo.startDate + ',' + pickInfo.endDate)
     })
     console.log('pickDate,js init finish')
   }
