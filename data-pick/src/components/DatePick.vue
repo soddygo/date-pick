@@ -43,7 +43,12 @@ export default {
   },
   computed: {
     rangeDate () {
-      return this.value
+      if (this.value.indexOf(',') > 0) {
+        var valueList = this.value.split(',')
+        return valueList.join(' - ')
+      } else {
+        return this.value
+      }
     }
   },
 
