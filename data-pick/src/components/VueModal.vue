@@ -150,8 +150,12 @@ export default {
   inheritAttrs: false,
   props: {
     'value': {
+      type: Object,
+      default: () => { return {} }
+    },
+    'dataParamOption': {
       type: Array,
-      default: []
+      default: () => { return [] }
     },
     'dataCommitTitle': {
       type: String,
@@ -253,7 +257,8 @@ export default {
     // 表单提交
     commit () {
       console.log('用户点击提交了:' + JSON.stringify(this.modalInfo))
-      this.$emit('update:value', this.modalInfo)
+      // this.$emit('update:value', this.modalInfo)
+      this.$emit('update:dataToggle', false)
       this.$emit('data-commit', this.modalInfo)
 
       // 隐藏modal
@@ -272,17 +277,7 @@ export default {
     toggleModal () {
       $('#' + this.modalId).modal('toggle')
     }
-    // emitEventToParent (eventName, ...args) {
-    //   if (!eventName) return
-    //   // 为了让接口更清晰
-    //   switch (eventName) {
-    //     case 'toggel-modal':
-    //       this.$emit(eventName, ...args)
-    //       break
-    //     default:
-    //       throw new ReferenceError(`the event of ${eventName} is not effective`)
-    //   }
-    // }
+
   },
   computed: {
     modalId () {
@@ -306,7 +301,7 @@ export default {
       }
     },
     paramOption () {
-      let tempItem = this.value
+      let tempItem = this.dataParamOption
       return tempItem
     }
 
@@ -335,6 +330,30 @@ export default {
       } else {
         $('#' + this.modalId).modal('hide')
       }
+    },
+    value: function (val) {
+      var modalInfo = this.modalInfo
+      var dataParamOption = this.dataParamOption
+
+      let Vue = this
+      // 删除旧属性
+      for (let index in modalInfo) {
+        Vue.$delete(this.modalInfo, index)
+      }
+      // 增加新属性
+      for (let index in val) {
+        Vue.$set(this.modalInfo, index, val[index])
+      }
+
+      dataParamOption.forEach(item => {
+        // 字段类型
+        let viewType = item.viewType
+        // 字段英文名
+        let code = item.code
+        if (viewType != null && typeof viewType !== 'undefined' && viewType.indexOf('Multi')) {
+          Vue.$set(this.modalInfo, code, val[code] || [])
+        }
+      })
     }
   }
 
