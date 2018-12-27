@@ -257,7 +257,7 @@ export default {
     commit () {
       console.log('用户点击提交了:' + JSON.stringify(this.modalInfo))
       this.$emit('update:value', this.modalInfo)
-      // this.$emit('data-commit', this.modalInfo)
+      this.$emit('data-commit', this.modalInfo)
 
       // 隐藏modal
       $('#' + this.modalId).modal('hide')
