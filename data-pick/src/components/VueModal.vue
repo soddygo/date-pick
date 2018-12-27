@@ -246,11 +246,8 @@ export default {
       }
     }
 
-    console.log('this.modalInfo:' + JSON.stringify(this.modalInfo))
     let modalId = this.defaultParams.modalId
     $('#' + modalId).modal('hide')
-
-    console.log('dataToggle>>>>>>' + this.dataToggle)
   },
   methods: {
     // 表单提交
@@ -295,14 +292,14 @@ export default {
       return this.dataViewFlag
     },
     commitTitle () {
-      if (this.dataCommitTitle != null && typeof this.dataCommitTitle === 'undefined') {
+      if (this.dataCommitTitle != null && typeof this.dataCommitTitle !== 'undefined') {
         return this.dataCommitTitle
       } else {
         return this.defaultParams.commitTitle
       }
     },
     modalTitle () {
-      if (this.dataTitle != null && typeof this.dataTitle === 'undefined') {
+      if (this.dataTitle != null && typeof this.dataTitle !== 'undefined') {
         return this.dataTitle
       } else {
         return this.defaultParams.modalTitle
