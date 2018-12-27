@@ -10,7 +10,9 @@
               <span>{{modalTitle}}</span>
             </div>
             <div class="stage-title pull-right">
-              <span class="cabin-big-icon close" data-dismiss="modal" aria-label="Close"></span>
+              <span class="cabin-big-icon close"  aria-label="Close"
+                    v-on:click="hideModal"
+              ></span>
             </div>
           </div>
         </div>
@@ -24,7 +26,7 @@
                   <!--输入框-->
                   <label class="control-label">{{item.name}}</label>
                   <input type="text" class="form-control" v-bind:placeholder="item.name"
-                         v-bind:disabled="modalFlag === 1"
+                         v-bind:disabled="viewFlag"
                          v-model="modalInfo[item.code]"
                          />
                 </div>
@@ -34,7 +36,7 @@
                   <!--输入框-->
                   <label class="control-label">{{item.name}}</label>
                   <input type="number" class="form-control" v-bind:placeholder="item.name"
-                         v-bind:disabled="modalFlag === 1"
+                         v-bind:disabled="viewFlag"
                          v-model="modalInfo[item.code]"
                          />
                 </div>
@@ -45,7 +47,7 @@
                   <label class="control-label">{{item.name}}</label>
                   <textarea name="" class="form-control" cols="50" rows="10"
                             v-bind:placeholder="item.name"
-                            v-bind:disabled="modalFlag === 1"
+                            v-bind:disabled="viewFlag"
                             v-model="modalInfo[item.code]"
                             >
                   </textarea>
@@ -57,7 +59,7 @@
                   <!--下拉框-->
                   <label class="control-label">{{item.name}}</label>
                   <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
-                              v-bind:disabled="modalFlag === 1"
+                              v-bind:disabled="viewFlag"
                               :options="choseOptions"
                               v-model="modalInfo[item.code]"
                               >
@@ -76,7 +78,7 @@
                   <!--下拉框-->
                   <label class="control-label">{{item.name}}</label>
                   <vue-chosen type="text" class="form-control"
-                              v-bind:disabled="modalFlag === 1"
+                              v-bind:disabled="viewFlag"
                               :options="choseOptions"
                               v-model="modalInfo[item.code]"
                               >
@@ -97,7 +99,7 @@
                   <label class="control-label">{{item.name}}</label>
                   <vue-chosen type="text" class="form-control"
                               multiple
-                              v-bind:disabled="modalFlag === 1"
+                              v-bind:disabled="viewFlag"
                               :options="multipleChoseOptions"
                               v-model="modalInfo[item.code]"
                               >
@@ -115,7 +117,7 @@
                   <!--下拉框-->
                   <label class="control-label">{{item.name}}</label>
                   <input type="text" class="form-control icondate"
-                         v-bind:disabled="modalFlag === 1"
+                         v-bind:disabled="viewFlag"
                          v-bind:placeholder="item.name" style="margin-bottom:10px;"
                          v-bind:value="modalInfo[item.code]|dateFilter"
                          v-on:input="modalInfo[item.code] = $event.target.value">
@@ -127,9 +129,9 @@
         <div class="modal-footer">
 
           <button type="button" class="btn btn-primary"
-                 >{{commitTitle}}
+                v-on:click="commit" >{{commitTitle}}
           </button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消
+          <button type="button" class="btn btn-default" v-on:click="hideModal">取消
           </button>
         </div>
       </div>
@@ -146,12 +148,32 @@ let VueChosen = require('cabin/widgets/vueChosen/vueChosen')
 export default {
   name: 'VueModal',
   inheritAttrs: false,
-  props: [
-    'value',
-    'dataCommitTitle',
-    'dataTitle',
-    'dataModalFlag'
-  ],
+  props: {
+    'value': {
+      type: Array,
+      default: []
+    },
+    'dataCommitTitle': {
+      type: String,
+      default: '确认'
+    },
+    'dataTitle': {
+      type: String,
+      default: ''
+    },
+    'dataViewFlag': {
+      type: Boolean,
+      default: true
+    },
+    'dataToggle': {
+      type: Boolean,
+      default: false
+    }
+  },
+  model: {
+    prop: 'value',
+    event: 'update'
+  },
   data () {
     function guid () {
       /**
@@ -170,6 +192,7 @@ export default {
       modalId: guid()
     }
     let modalInfo = {
+      dicTypes: []
     }
 
     // chose参数
@@ -213,12 +236,63 @@ export default {
     }
   },
   mounted () {
+    // 绑定对象初始化
+    for (let obj of this.paramOption) {
+      this.modalInfo[obj.code] = obj.default
+      if (obj.code === 'remoteMultiOption' || obj.code === 'remoteOption' || obj.code === 'options') {
+        if (!(obj.default instanceof Array)) {
+          this.modalInfo[obj.code] = []
+        }
+      }
+    }
+
+    console.log('this.modalInfo:' + JSON.stringify(this.modalInfo))
     let modalId = this.defaultParams.modalId
-    $('#' + modalId).modal('show')
+    $('#' + modalId).modal('hide')
+
+    console.log('dataToggle>>>>>>' + this.dataToggle)
+  },
+  methods: {
+    // 表单提交
+    commit () {
+      console.log('用户点击提交了:' + JSON.stringify(this.modalInfo))
+      this.$emit('update:value', this.modalInfo)
+      // this.$emit('data-commit', this.modalInfo)
+
+      // 隐藏modal
+      $('#' + this.modalId).modal('hide')
+    },
+    // 显示弹窗
+    showModal () {
+      $('#' + this.modalId).modal('show')
+    },
+    // 隐藏弹窗
+    hideModal () {
+      $('#' + this.modalId).modal('hide')
+      this.$emit('update:dataToggle', false)
+    },
+    // 触发弹窗
+    toggleModal () {
+      $('#' + this.modalId).modal('toggle')
+    }
+    // emitEventToParent (eventName, ...args) {
+    //   if (!eventName) return
+    //   // 为了让接口更清晰
+    //   switch (eventName) {
+    //     case 'toggel-modal':
+    //       this.$emit(eventName, ...args)
+    //       break
+    //     default:
+    //       throw new ReferenceError(`the event of ${eventName} is not effective`)
+    //   }
+    // }
   },
   computed: {
     modalId () {
       return this.defaultParams.modalId
+    },
+    viewFlag () {
+      return this.dataViewFlag
     },
     commitTitle () {
       if (this.dataCommitTitle != null && typeof this.dataCommitTitle === 'undefined') {
@@ -237,13 +311,6 @@ export default {
     paramOption () {
       let tempItem = this.value
       return tempItem
-    },
-    /**
-       * modal标记,1:查看;2:修改
-       * @returns {string}
-       */
-    modalFlag () {
-      return this.dataModalFlag
     }
 
   },
@@ -255,11 +322,22 @@ export default {
        * 时间格式化
        */
     dateFilter (value) {
-      if (value == null || typeof value === 'undefined') {
+      if (value == null || typeof value === 'undefined' || value === '') {
         return ''
       }
       var date = moment(value).format('YYYY-MM-DD HH:mm:ss')
       return date
+    }
+  },
+  watch: {
+    // 显示隐藏modal
+    dataToggle: function (val) {
+      console.log('dataToggle test:' + val)
+      if (val === true) {
+        $('#' + this.modalId).modal('show')
+      } else {
+        $('#' + this.modalId).modal('hide')
+      }
     }
   }
 
