@@ -2,17 +2,22 @@
   <div id="app">
     <img src="./assets/logo.png">
     <HelloWorld/>
+    <vue-modal data-Commit-Title="提交" data-Title="哈哈,测试"
+               data-Modal-Flag = "1"  >
+    </vue-modal>
   </div>
 </template>
 
 <script>
 // import HelloWorld from './components/HelloWorld'
 import DatePick from './components/DatePick'
+import VueModal from './components/VueModal'
 
 export default {
   name: 'App',
   components: {
-    DatePick
+    DatePick,
+    VueModal
   }
 }
 </script>
