@@ -249,7 +249,6 @@ export default {
         Vue.$set(this.modalInfo, obj.code, '')
       }
     }
-    console.log('modalInfo:' + JSON.stringify(this.modalInfo))
   },
   mounted () {
     let modalId = this.defaultParams.modalId
