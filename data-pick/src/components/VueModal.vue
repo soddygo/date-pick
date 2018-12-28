@@ -196,7 +196,6 @@ export default {
       modalId: guid()
     }
     let modalInfo = {
-      dicTypes: []
     }
 
     // chose参数
@@ -239,17 +238,20 @@ export default {
       multipleChoseOptionsNoSearch: multipleChoseOptionsNoSearch
     }
   },
-  mounted () {
+  beforeMount () {
+    let Vue = this
     // 绑定对象初始化
     for (let obj of this.paramOption) {
       this.modalInfo[obj.code] = obj.default
-      if (obj.code === 'remoteMultiOption' || obj.code === 'remoteOption' || obj.code === 'options') {
-        if (!(obj.default instanceof Array)) {
-          this.modalInfo[obj.code] = []
-        }
+      if (obj.code.indexOf('Multi') && obj.default instanceof Array) {
+        Vue.$set(this.modalInfo, obj.code, [])
+      } else {
+        Vue.$set(this.modalInfo, obj.code, '')
       }
     }
-
+    console.log('modalInfo:' + JSON.stringify(this.modalInfo))
+  },
+  mounted () {
     let modalId = this.defaultParams.modalId
     $('#' + modalId).modal('hide')
   },
@@ -257,12 +259,8 @@ export default {
     // 表单提交
     commit () {
       console.log('用户点击提交了:' + JSON.stringify(this.modalInfo))
-      // this.$emit('update:value', this.modalInfo)
-      this.$emit('update:dataToggle', false)
+      // this.$emit('update:dataToggle', false)
       this.$emit('data-commit', this.modalInfo)
-
-      // 隐藏modal
-      $('#' + this.modalId).modal('hide')
     },
     // 显示弹窗
     showModal () {
