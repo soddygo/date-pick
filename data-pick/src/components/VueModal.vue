@@ -257,7 +257,6 @@ export default {
   methods: {
     // 表单提交
     commit () {
-      console.log('用户点击提交了:' + JSON.stringify(this.modalInfo))
       // this.$emit('update:dataToggle', false)
       this.$emit('data-commit', this.modalInfo)
     },
