@@ -44,7 +44,7 @@ export default {
   computed: {
     rangeDate () {
       if (this.value.indexOf(',') > 0) {
-        var valueList = this.value.split(',')
+        let valueList = this.value.split(',')
         return valueList.join(' - ')
       } else {
         return this.value
@@ -72,7 +72,12 @@ export default {
       defaultFormat = this.format
     }
 
-    var Vue = this
+    let Vue = this
+
+    pickInfo.startDate = start.format(defaultFormat)
+    pickInfo.endDate = end.format(defaultFormat)
+
+    Vue.$emit('update', pickInfo.startDate + ',' + pickInfo.endDate)
 
     $(this.$el).daterangepicker({
       startDate: start,
@@ -108,7 +113,6 @@ export default {
       // console.log('选择后的时间范围value:' + value)
       Vue.$emit('update', pickInfo.startDate + ',' + pickInfo.endDate)
     })
-    console.log('pickDate,js init finish')
   }
 }
 </script>
