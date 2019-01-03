@@ -242,11 +242,14 @@ export default {
     let Vue = this
     // 绑定对象初始化
     for (let obj of this.paramOption) {
-      this.modalInfo[obj.code] = obj.default
       if (obj.code.indexOf('Multi') && obj.default instanceof Array) {
         Vue.$set(this.modalInfo, obj.code, [])
       } else {
-        Vue.$set(this.modalInfo, obj.code, '')
+        if (obj.default != null && typeof obj.default !== 'undefined') {
+          Vue.$set(this.modalInfo, obj.code, obj.default)
+        } else {
+          Vue.$set(this.modalInfo, obj.code, '')
+        }
       }
     }
   },
