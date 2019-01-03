@@ -14,7 +14,8 @@
     "build": "node build/build.js",
     "build2": "cross-env NODE_ENV=production webpack --progress --hide-modules",
     "build3": "cross-env NODE_ENV=production webpack --progress --hide-modules --config webpack.configModal.js",
-    "build4": "cross-env NODE_ENV=production webpack --progress --hide-modules --config webpack.configChosen.js"
+    "build4": "cross-env NODE_ENV=production webpack --progress --hide-modules --config webpack.configChosen.js",
+    "build5": "cross-env NODE_ENV=production webpack --progress --hide-modules --config webpack.configSearchForm.js"
   },
   "dependencies": {
     "vue": "^2.5.2"

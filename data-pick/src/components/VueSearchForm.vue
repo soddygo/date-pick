@@ -1,0 +1,195 @@
+<template>
+  <div class="cabin-base-form clearfix">
+    <div class="form-horizontal clearfix">
+      <template v-for="(item,index) in paramOption">
+        <template v-if="item.searchFlag === 1">
+          <div :key="item.id" v-if="item.viewType ==='text'"
+               class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <!--输入框-->
+            <label class="control-label">{{item.name}}</label>
+            <input type="text" class="form-control" v-bind:placeholder="item.name"
+                   v-model="searchParam[item.code]"/>
+          </div>
+          <div :key="item.id" v-else-if="item.viewType ==='textarea'"
+               class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <!--输入框-->
+            <label class="control-label">{{item.name}}</label>
+            <input type="text" class="form-control" v-bind:placeholder="item.name"
+                   v-model="searchParam[item.code]"/>
+          </div>
+          <div :key="item.id" v-else-if="item.viewType ==='number'"
+               class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <!--输入框-->
+            <label class="control-label">{{item.name}}</label>
+            <input type="number" class="form-control" v-bind:placeholder="item.name"
+                   v-model="searchParam[item.code]"/>
+          </div>
+
+          <div :key="item.id" v-else-if="item.viewType ==='options'"
+               class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <!--下拉框-->
+            <label class="control-label">{{item.name}}</label>
+            <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
+                        :options="choseOptions"
+                        v-model="searchParam[item.code]" >
+              <option disabled>=={{item.name}}==</option>
+              <option value="">全部</option>
+              <option v-bind:key="option.key" v-for="option in item.searchOptions"
+                      v-bind:value="option.key">
+                {{option.value}}
+              </option>
+            </vue-chosen>
+          </div>
+
+          <!--后台服务请求查询获得下拉选项-->
+          <div :key="item.id" v-else-if="item.viewType ==='remoteOption'"
+               class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <!--下拉框-->
+            <label class="control-label">{{item.name}}</label>
+            <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
+                        :options="choseOptions"
+                        v-model="searchParam[item.code]">
+              <option disabled>=={{item.name}}==</option>
+              <option value="">全部</option>
+              <option v-bind:key="option.code" v-for="option in item.options"
+                      v-bind:value="option.code">
+                {{option.name}}
+              </option>
+            </vue-chosen>
+          </div>
+          <!--后台服务请求查询获得下拉选项-->
+          <div :key="item.id" v-else-if="item.viewType ==='remoteMultiOption'"
+               class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <!--下拉框-->
+            <label class="control-label">{{item.name}}</label>
+            <vue-chosen type="text" class="form-control"
+                        v-bind:placeholder="item.name"
+                        multiple
+                        :options="multipleChoseOptions"
+                        v-model="searchParam[item.code]">
+              <option disabled>=={{item.name}}==</option>
+              <option value="">全部</option>
+              <option v-bind:key="option.code" v-for="option in item.options"
+                      v-bind:value="option.code">
+                {{option.name}}
+              </option>
+            </vue-chosen>
+          </div>
+        </template>
+
+      </template>
+    </div>
+  </div>
+</template>
+
+<script>
+import 'jQuery'
+import 'cabin/lib/daterangepicker/moment'
+import 'cabin/lib/chosen/chosen.jquery.js'
+let VueChosen = require('cabin/widgets/vueChosen/vueChosen')
+
+export default {
+  name: 'VueSearchForm',
+  props: {
+    'value': {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    'dataParamOption': {
+      type: Array,
+      default: () => {
+        return []
+      }
+    }
+  },
+  model: {
+    prop: 'value',
+    event: 'update'
+  },
+  data () {
+    function guid () {
+      /**
+         * @return {string}
+         */
+      function S4 () {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+      }
+
+      return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4())
+    }
+
+    let defaultParams = {
+      modalId: guid()
+    }
+
+    // chose参数
+    let choseOptions = {
+      no_results_text: '没有找到',
+      search_contains: true, // 关键字模糊搜索，设置为false，则只从开头开始匹配
+      max_selected_options: 1, // 当select为多选时，最多选择个数
+      disable_search: false, // 开启搜索功能
+      width: '100%'
+    }
+    // 不带搜索框chose
+    let choseOptionsNoSearch = {
+      no_results_text: '没有找到',
+      search_contains: true, // 关键字模糊搜索，设置为false，则只从开头开始匹配
+      max_selected_options: 1, // 当select为多选时，最多选择个数
+      disable_search: true,
+      width: '100%'
+    }
+
+    // chose参数,多选
+    let multipleChoseOptions = {
+      no_results_text: '没有找到',
+      search_contains: true, // 关键字模糊搜索，设置为false，则只从开头开始匹配
+      width: '100%'
+    }
+    // 不带搜索框chose,多选
+    let multipleChoseOptionsNoSearch = {
+      no_results_text: '没有找到',
+      search_contains: true, // 关键字模糊搜索，设置为false，则只从开头开始匹配
+      disable_search: true,
+      width: '100%'
+    }
+
+    return {
+      defaultParams: defaultParams,
+      choseOptions: choseOptions,
+      choseOptionsNoSearch: choseOptionsNoSearch,
+      multipleChoseOptions: multipleChoseOptions,
+      multipleChoseOptionsNoSearch: multipleChoseOptionsNoSearch
+    }
+  },
+  beforeMount () {
+    let Vue = this
+    // 绑定对象初始化
+    for (let obj of this.paramOption) {
+      this.searchParam[obj.code] = obj.default
+      if (obj.code.indexOf('Multi') && obj.default instanceof Array) {
+        Vue.$set(this.searchParam, obj.code, [])
+      } else {
+        Vue.$set(this.searchParam, obj.code, '')
+      }
+    }
+  },
+  computed: {
+    paramOption () {
+      return this.dataParamOption
+    },
+    searchParam () {
+      return this.value
+    }
+
+  },
+  components: {
+    VueChosen
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
