@@ -8,6 +8,7 @@
             <!--输入框-->
             <label class="control-label">{{item.name}}</label>
             <input type="text" class="form-control" v-bind:placeholder="item.name"
+                   v-bind:disabled="item.disable"
                    v-model="searchParam[item.code]"/>
           </div>
           <div :key="item.id" v-else-if="item.viewType ==='textarea'"
@@ -15,6 +16,7 @@
             <!--输入框-->
             <label class="control-label">{{item.name}}</label>
             <input type="text" class="form-control" v-bind:placeholder="item.name"
+                   v-bind:disabled="item.disable"
                    v-model="searchParam[item.code]"/>
           </div>
           <div :key="item.id" v-else-if="item.viewType ==='number'"
@@ -22,6 +24,7 @@
             <!--输入框-->
             <label class="control-label">{{item.name}}</label>
             <input type="number" class="form-control" v-bind:placeholder="item.name"
+                   v-bind:disabled="item.disable"
                    v-model="searchParam[item.code]"/>
           </div>
 
@@ -30,8 +33,9 @@
             <!--下拉框-->
             <label class="control-label">{{item.name}}</label>
             <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
+                        v-bind:disabled="item.disable"
                         :options="choseOptions"
-                        v-model="searchParam[item.code]" >
+                        v-model="searchParam[item.code]">
               <option disabled>=={{item.name}}==</option>
               <option value="">全部</option>
               <option v-bind:key="option.key" v-for="option in item.searchOptions"
@@ -48,6 +52,7 @@
             <label class="control-label">{{item.name}}</label>
             <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
                         :options="choseOptions"
+                        v-bind:disabled="item.disable"
                         v-model="searchParam[item.code]">
               <option disabled>=={{item.name}}==</option>
               <option value="">全部</option>
@@ -64,6 +69,7 @@
             <label class="control-label">{{item.name}}</label>
             <vue-chosen type="text" class="form-control"
                         v-bind:placeholder="item.name"
+                        v-bind:disabled="item.disable"
                         multiple
                         :options="multipleChoseOptions"
                         v-model="searchParam[item.code]">
@@ -74,6 +80,33 @@
                 {{option.name}}
               </option>
             </vue-chosen>
+          </div>
+          <div :key="item.id" v-else-if="item.viewType ==='radio'"
+               class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <!--单选radio-->
+            <label class="control-label">{{item.name}}</label>
+
+            <template v-for="(itemParam,index) in item.options">
+
+              <div v-bind:key="item.code+index" class="radio-inline">
+                <input type="radio" v-bind:id="item.code+index"
+                       v-bind:value="itemParam.key"
+                       v-model="searchParam[item.code]"
+                       v-bind:disabled="itemParam.disable"
+                       v-bind:name="item.code">
+                <label v-bind:for="item.code+index">{{itemParam.value}}</label>
+              </div>
+            </template>
+          </div>
+          <div :key="item.id" v-else-if="item.viewType ==='time'"
+               class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <label class="control-label">{{item.name}}</label>
+            <div class="base-form-content clearfix date-group-box">
+              <date-pick v-model="searchParam[item.code]"
+                         format="YYYY-MM-DD"
+                         placeholder="请选择日期"
+              />
+            </div>
           </div>
         </template>
 
@@ -86,6 +119,8 @@
 import 'jQuery'
 import 'cabin/lib/daterangepicker/moment'
 import 'cabin/lib/chosen/chosen.jquery.js'
+import DatePick from './DatePick'
+
 let VueChosen = require('cabin/widgets/vueChosen/vueChosen')
 
 export default {
@@ -185,7 +220,7 @@ export default {
 
   },
   components: {
-    VueChosen
+    VueChosen, DatePick
   }
 }
 </script>
