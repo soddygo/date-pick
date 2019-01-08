@@ -30,7 +30,23 @@
 
           <div :key="item.id" v-else-if="item.viewType ==='options'"
                class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            <!--下拉框-->
+            <!--不带搜索下拉框-->
+            <label class="control-label">{{item.name}}</label>
+            <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
+                        v-bind:disabled="item.disable"
+                        :options="choseOptionsNoSearch"
+                        v-model="searchParam[item.code]">
+              <option disabled>=={{item.name}}==</option>
+              <option value="">全部</option>
+              <option v-bind:key="option.key" v-for="option in item.searchOptions"
+                      v-bind:value="option.key">
+                {{option.value}}
+              </option>
+            </vue-chosen>
+          </div>
+          <div :key="item.id" v-else-if="item.viewType ==='optionsSearch'"
+               class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <!--带搜索框下拉框-->
             <label class="control-label">{{item.name}}</label>
             <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
                         v-bind:disabled="item.disable"

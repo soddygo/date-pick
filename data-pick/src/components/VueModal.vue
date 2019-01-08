@@ -56,7 +56,25 @@
                 <div :key="item.id"
                      v-else-if="item.viewType ==='options' "
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <!--下拉框-->
+                  <!--带搜索框下拉框-->
+                  <label class="control-label">{{item.name}}</label>
+                  <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
+                              v-bind:disabled="viewFlag"
+                              :options="choseOptionsNoSearch"
+                              v-model="modalInfo[item.code]"
+                              >
+                    <option disabled>=={{item.name}}==</option>
+                    <option v-bind:key="option.key" v-for="option in item.options"
+                            v-bind:value="option.key"
+                            >
+                      {{option.value}}
+                    </option>
+                  </vue-chosen>
+                </div>
+                <div :key="item.id"
+                     v-else-if="item.viewType ==='optionsSearch' "
+                     class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <!--没搜索框的下拉框-->
                   <label class="control-label">{{item.name}}</label>
                   <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
                               v-bind:disabled="viewFlag"
