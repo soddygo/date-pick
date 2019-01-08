@@ -122,6 +122,30 @@
                          v-bind:value="modalInfo[item.code]|dateFilter"
                          v-on:input="modalInfo[item.code] = $event.target.value">
                 </div>
+                <!--行模块-->
+                <div :key="item.id"
+                v-else-if="item.viewType ==='switch'"
+                  class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <label class="control-label">{{item.name}}</label>
+                  <!--行模块：内容-->
+                  <div class="clearfix base-form-vertical-lists">
+                    <div class="clearfix base-form-vertical-list row">
+                      <div class="col-lg-6 col-md-6  col-sm-12 col-xs-12">
+                        <div class="switch-inline" style="padding-top:5px;">
+                          <input type="checkbox" v-bind:id="item.id" v-model="modalInfo[item.code]">
+                          <label v-bind:for="item.id">
+                            <span v-bind:key="option.key" v-for="option in item.options"
+                                    v-bind:value="option.key">
+                              {{option.value}}
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!--行模块：内容end-->
+                </div>
+                <!--行模块end-->
               </template>
             </div>
           </div>
@@ -258,6 +282,27 @@ export default {
     $('#' + modalId).modal('hide')
   },
   methods: {
+    // 重置参数默认值
+    reset () {
+      let Vue = this
+      // 绑定对象初始化
+      for (let obj of this.paramOption) {
+        if (obj.code.indexOf('Multi') && obj.default instanceof Array) {
+          Vue.$set(this.modalInfo, obj.code, [])
+        } else {
+          if (obj.default != null && typeof obj.default !== 'undefined') {
+            Vue.$set(this.modalInfo, obj.code, obj.default)
+          } else {
+            Vue.$set(this.modalInfo, obj.code, '')
+          }
+        }
+      }
+    },
+    // 获取modal id
+    getModalId () {
+      this.$emit('data-modal-id', this.modalInfo)
+      return this.modalId
+    },
     // 表单提交
     commit () {
       // this.$emit('update:dataToggle', false)
