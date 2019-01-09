@@ -218,20 +218,24 @@ export default {
     let Vue = this
     // 绑定对象初始化
     for (let obj of this.paramOption) {
-      this.searchParam[obj.code] = obj.default
-      if (obj.code.indexOf('Multi') && obj.default instanceof Array) {
+      if (obj.code != null && typeof obj.code !== 'undefined' &&
+        obj.code.indexOf('Multi') && obj.default instanceof Array) {
         Vue.$set(this.searchParam, obj.code, [])
       } else {
-        Vue.$set(this.searchParam, obj.code, '')
+        if (obj.default != null && typeof obj.default !== 'undefined') {
+          Vue.$set(this.searchParam, obj.code, obj.default)
+        } else {
+          Vue.$set(this.searchParam, obj.code, '')
+        }
       }
     }
   },
   computed: {
     paramOption () {
-      return this.dataParamOption
+      return this.dataParamOption || []
     },
     searchParam () {
-      return this.value
+      return this.value || {}
     }
 
   },
