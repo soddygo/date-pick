@@ -11,8 +11,8 @@
             </div>
             <div class="stage-title pull-right">
               <span class="cabin-big-icon close"  aria-label="Close"
-                    v-on:click="hideModal"
-              ></span>
+                    v-on:click="hideModal">
+              </span>
             </div>
           </div>
         </div>
@@ -270,7 +270,6 @@ export default {
       width: '100%'
     }
 
-    console.log('defaultParams:' + JSON.stringify(defaultParams))
     return {
       modalInfo: modalInfo,
       defaultParams: defaultParams,
@@ -283,14 +282,15 @@ export default {
   beforeMount () {
     let Vue = this
     // 绑定对象初始化
+    this.modalInfo = {}
     for (let obj of this.paramOption) {
-      if (obj.code.indexOf('Multi') && obj.default instanceof Array) {
+      if (obj.viewType.indexOf('Multi') > 0 || obj.default instanceof Array) {
         Vue.$set(this.modalInfo, obj.code, [])
       } else {
-        if (obj.default != null && typeof obj.default !== 'undefined') {
+        if (obj.default !== null && typeof obj.default !== 'undefined') {
           Vue.$set(this.modalInfo, obj.code, obj.default)
         } else {
-          Vue.$set(this.modalInfo, obj.code, '')
+          Vue.$set(this.modalInfo, obj.code, {})
         }
       }
     }
@@ -305,13 +305,13 @@ export default {
       let Vue = this
       // 绑定对象初始化
       for (let obj of this.paramOption) {
-        if (obj.code.indexOf('Multi') && obj.default instanceof Array) {
+        if (obj.viewType.indexOf('Multi') > 0 || obj.default instanceof Array) {
           Vue.$set(this.modalInfo, obj.code, [])
         } else {
-          if (obj.default != null && typeof obj.default !== 'undefined') {
+          if (obj.default !== null && typeof obj.default !== 'undefined') {
             Vue.$set(this.modalInfo, obj.code, obj.default)
           } else {
-            Vue.$set(this.modalInfo, obj.code, '')
+            Vue.$set(this.modalInfo, obj.code, {})
           }
         }
       }
@@ -395,8 +395,6 @@ export default {
     },
     value: function (val) {
       var modalInfo = this.modalInfo
-      var dataParamOption = this.dataParamOption
-
       let Vue = this
       // 删除旧属性
       for (let index in modalInfo) {
@@ -406,16 +404,6 @@ export default {
       for (let index in val) {
         Vue.$set(this.modalInfo, index, val[index])
       }
-
-      dataParamOption.forEach(item => {
-        // 字段类型
-        let viewType = item.viewType
-        // 字段英文名
-        let code = item.code
-        if (viewType != null && typeof viewType !== 'undefined' && viewType.indexOf('Multi')) {
-          Vue.$set(this.modalInfo, code, val[code] || [])
-        }
-      })
     }
   }
 
