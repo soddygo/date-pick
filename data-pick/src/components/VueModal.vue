@@ -24,7 +24,7 @@
                      v-if="item.viewType ==='text'  "
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--输入框-->
-                  <label class="control-label">{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"  class="font-error">* </span>{{item.name}}</label>
                   <input type="text" class="form-control" v-bind:placeholder="item.name"
                          v-bind:disabled="viewFlag"
                          v-model="modalInfo[item.code]"
@@ -34,7 +34,7 @@
                      v-else-if="item.viewType ==='number' "
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--输入框-->
-                  <label class="control-label">{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
                   <input type="number" class="form-control" v-bind:placeholder="item.name"
                          v-bind:disabled="viewFlag"
                          v-model="modalInfo[item.code]"
@@ -44,7 +44,7 @@
                      v-else-if="item.viewType ==='textarea' "
                      class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <!--输入框-->
-                  <label class="control-label">{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
                   <textarea name="" class="form-control" cols="50" rows="10"
                             v-bind:placeholder="item.name"
                             v-bind:disabled="viewFlag"
@@ -57,7 +57,7 @@
                      v-else-if="item.viewType ==='options' "
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--带搜索框下拉框-->
-                  <label class="control-label">{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
                   <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
                               v-bind:disabled="viewFlag"
                               :options="choseOptionsNoSearch"
@@ -75,7 +75,7 @@
                      v-else-if="item.viewType ==='optionsSearch' "
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--没搜索框的下拉框-->
-                  <label class="control-label">{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
                   <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
                               v-bind:disabled="viewFlag"
                               :options="choseOptions"
@@ -94,7 +94,7 @@
                      v-else-if="item.viewType ==='remoteOption' "
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--下拉框-->
-                  <label class="control-label">{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"  class="font-error">* </span>{{item.name}}</label>
                   <vue-chosen type="text" class="form-control"
                               v-bind:disabled="viewFlag"
                               :options="choseOptions"
@@ -114,7 +114,7 @@
 
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--下拉框-->
-                  <label class="control-label">{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
                   <vue-chosen type="text" class="form-control"
                               multiple
                               v-bind:disabled="viewFlag"
@@ -133,7 +133,7 @@
                      v-else-if="item.viewType ==='time'"
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--下拉框-->
-                  <label class="control-label">{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
                   <input type="text" class="form-control icondate"
                          v-bind:disabled="viewFlag"
                          v-bind:placeholder="item.name" style="margin-bottom:10px;"
@@ -239,6 +239,9 @@ export default {
     }
     let modalInfo = {
     }
+    // 扩展信息
+    let modalExtraInfo = {
+    }
 
     // chose参数
     let choseOptions = {
@@ -272,6 +275,7 @@ export default {
 
     return {
       modalInfo: modalInfo,
+      modalExtraInfo: modalExtraInfo,
       defaultParams: defaultParams,
       choseOptions: choseOptions,
       choseOptionsNoSearch: choseOptionsNoSearch,
@@ -283,6 +287,7 @@ export default {
     let Vue = this
     // 绑定对象初始化
     this.modalInfo = {}
+    this.modalExtraInfo = {}
     for (let obj of this.paramOption) {
       if (obj.viewType.indexOf('Multi') > 0 || obj.default instanceof Array) {
         Vue.$set(this.modalInfo, obj.code, [])
@@ -293,6 +298,24 @@ export default {
           Vue.$set(this.modalInfo, obj.code, {})
         }
       }
+      // 检查字段是否必选字段
+      let conditionsStr = (obj.validate || '')
+      let startIndex = conditionsStr.indexOf('|')
+      let conditionParam = []
+
+      if (startIndex !== -1) {
+        conditionParam = conditionsStr.split('|')
+      } else {
+        conditionParam[0] = conditionsStr
+      }
+
+      this.modalExtraInfo[obj.code] = {}
+      for (let conditionValue of conditionParam) {
+        if (conditionValue === 'required') {
+          Vue.$set(this.modalExtraInfo[obj.code], 'required', true)
+        }
+      }
+
     }
   },
   mounted () {
