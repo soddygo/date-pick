@@ -26,7 +26,7 @@
                   <!--输入框-->
                   <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"  class="font-error">* </span>{{item.name}}</label>
                   <input type="text" class="form-control" v-bind:placeholder="item.name"
-                         v-bind:disabled="viewFlag"
+                         v-bind:disabled="viewFlag||item.modalDisable"
                          v-model="modalInfo[item.code]"
                          />
                 </div>
@@ -36,7 +36,7 @@
                   <!--输入框-->
                   <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
                   <input type="number" class="form-control" v-bind:placeholder="item.name"
-                         v-bind:disabled="viewFlag"
+                         v-bind:disabled="viewFlag||item.modalDisable"
                          v-model="modalInfo[item.code]"
                          />
                 </div>
@@ -47,7 +47,7 @@
                   <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
                   <textarea name="" class="form-control" cols="50" rows="10"
                             v-bind:placeholder="item.name"
-                            v-bind:disabled="viewFlag"
+                            v-bind:disabled="viewFlag||item.modalDisable"
                             v-model="modalInfo[item.code]"
                             >
                   </textarea>
@@ -59,7 +59,7 @@
                   <!--带搜索框下拉框-->
                   <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
                   <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
-                              v-bind:disabled="viewFlag"
+                              v-bind:disabled="viewFlag||item.modalDisable"
                               :options="choseOptionsNoSearch"
                               v-model="modalInfo[item.code]"
                               >
@@ -77,7 +77,7 @@
                   <!--没搜索框的下拉框-->
                   <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
                   <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
-                              v-bind:disabled="viewFlag"
+                              v-bind:disabled="viewFlag||item.modalDisable"
                               :options="choseOptions"
                               v-model="modalInfo[item.code]"
                               >
@@ -96,7 +96,7 @@
                   <!--下拉框-->
                   <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"  class="font-error">* </span>{{item.name}}</label>
                   <vue-chosen type="text" class="form-control"
-                              v-bind:disabled="viewFlag"
+                              v-bind:disabled="viewFlag||item.modalDisable"
                               :options="choseOptions"
                               v-model="modalInfo[item.code]"
                               >
@@ -117,7 +117,7 @@
                   <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
                   <vue-chosen type="text" class="form-control"
                               multiple
-                              v-bind:disabled="viewFlag"
+                              v-bind:disabled="viewFlag||item.modalDisable"
                               :options="multipleChoseOptions"
                               v-model="modalInfo[item.code]"
                               >
@@ -135,7 +135,7 @@
                   <!--下拉框-->
                   <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
                   <input type="text" class="form-control icondate"
-                         v-bind:disabled="viewFlag"
+                         v-bind:disabled="viewFlag||item.modalDisable"
                          v-bind:placeholder="item.name" style="margin-bottom:10px;"
                          v-bind:value="modalInfo[item.code]|dateFilter"
                          v-on:input="modalInfo[item.code] = $event.target.value">
