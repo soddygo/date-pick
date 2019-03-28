@@ -137,7 +137,7 @@ import 'cabin/lib/daterangepicker/moment'
 import 'cabin/lib/chosen/chosen.jquery.js'
 import DatePick from './DatePick'
 
-let VueChosen = require('cabin/widgets/vueChosen/vueChosen')
+let VueChosen = require('cabin/widgets/vueChosen/vueChosen');
 
 export default {
   name: 'VueSearchForm',
@@ -173,7 +173,7 @@ export default {
 
     let defaultParams = {
       modalId: guid()
-    }
+    };
 
     // chose参数
     let choseOptions = {
@@ -182,7 +182,7 @@ export default {
       max_selected_options: 1, // 当select为多选时，最多选择个数
       disable_search: false, // 开启搜索功能
       width: '100%'
-    }
+    };
     // 不带搜索框chose
     let choseOptionsNoSearch = {
       no_results_text: '没有找到',
@@ -190,21 +190,21 @@ export default {
       max_selected_options: 1, // 当select为多选时，最多选择个数
       disable_search: true,
       width: '100%'
-    }
+    };
 
     // chose参数,多选
     let multipleChoseOptions = {
       no_results_text: '没有找到',
       search_contains: true, // 关键字模糊搜索，设置为false，则只从开头开始匹配
       width: '100%'
-    }
+    };
     // 不带搜索框chose,多选
     let multipleChoseOptionsNoSearch = {
       no_results_text: '没有找到',
       search_contains: true, // 关键字模糊搜索，设置为false，则只从开头开始匹配
       disable_search: true,
       width: '100%'
-    }
+    };
 
     return {
       defaultParams: defaultParams,
@@ -215,7 +215,7 @@ export default {
     }
   },
   beforeMount () {
-    let Vue = this
+    let Vue = this;
     // 绑定对象初始化
     for (let obj of this.paramOption) {
       if (obj.viewType.indexOf('Multi') > 0 || obj.default instanceof Array) {
@@ -227,6 +227,12 @@ export default {
           Vue.$set(this.searchParam, obj.code, '')
         }
       }
+    }
+  },
+  methods: {
+    setModelAttr(key,val){
+      console.log("赋值:key:"+key+",val:"+val);
+      this.$set(this.searchParam, key, val)
     }
   },
   computed: {
