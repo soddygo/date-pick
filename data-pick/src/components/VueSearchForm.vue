@@ -37,7 +37,24 @@
                         :options="choseOptionsNoSearch"
                         v-model="searchParam[item.code]">
               <option disabled>=={{item.name}}==</option>
-              <option value="">全部</option>
+              <option v-if="allFlagOption === true" value="">全部</option>
+              <option v-bind:key="option.key" v-for="option in item.searchOptions"
+                      v-bind:value="option.key">
+                {{option.value}}
+              </option>
+            </vue-chosen>
+          </div>
+          <div :key="item.id" v-else-if="item.viewType ==='multiOptions'"
+               class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <!--带搜索多选下拉框-->
+            <label class="control-label">{{item.name}}</label>
+            <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
+                        v-bind:disabled="item.disable"
+                        multiple
+                        :options="multipleChoseOptions"
+                        v-model="searchParam[item.code]">
+              <option disabled>=={{item.name}}==</option>
+              <option v-if="allFlagOption === true" value="">全部</option>
               <option v-bind:key="option.key" v-for="option in item.searchOptions"
                       v-bind:value="option.key">
                 {{option.value}}
@@ -53,7 +70,7 @@
                         :options="choseOptions"
                         v-model="searchParam[item.code]">
               <option disabled>=={{item.name}}==</option>
-              <option value="">全部</option>
+              <option v-if="allFlagOption === true" value="">全部</option>
               <option v-bind:key="option.key" v-for="option in item.searchOptions"
                       v-bind:value="option.key">
                 {{option.value}}
@@ -71,7 +88,7 @@
                         v-bind:disabled="item.disable"
                         v-model="searchParam[item.code]">
               <option disabled>=={{item.name}}==</option>
-              <option value="">全部</option>
+              <option v-if="allFlagOption === true" value="">全部</option>
               <option v-bind:key="option.code" v-for="option in item.options"
                       v-bind:value="option.code">
                 {{option.name}}
@@ -90,7 +107,7 @@
                         :options="multipleChoseOptions"
                         v-model="searchParam[item.code]">
               <option disabled>=={{item.name}}==</option>
-              <option value="">全部</option>
+              <option v-if="allFlagOption === true" value="">全部</option>
               <option v-bind:key="option.code" v-for="option in item.options"
                       v-bind:value="option.code">
                 {{option.name}}
@@ -152,6 +169,12 @@ export default {
       type: Array,
       default: () => {
         return []
+      }
+    },
+    'allFlag': {
+      type: String,
+      default: () => {
+        return 'true'
       }
     }
   },
@@ -218,8 +241,14 @@ export default {
     let Vue = this
     // 绑定对象初始化
     for (let obj of this.paramOption) {
-      if (obj.viewType.indexOf('Multi') > 0 || obj.default instanceof Array) {
-        Vue.$set(this.searchParam, obj.code, [])
+      if (obj.viewType.indexOf('Multi') > 0 || obj.viewType.indexOf('multi') > 0 || obj.default instanceof Array) {
+        if (obj.default != null && typeof obj.default !== 'undefined' && obj.default !== '') {
+          let arr = []
+          arr.push(obj.default)
+          Vue.$set(this.searchParam, obj.code, arr)
+        } else {
+          Vue.$set(this.searchParam, obj.code, [])
+        }
       } else {
         if (obj.default != null && typeof obj.default !== 'undefined') {
           Vue.$set(this.searchParam, obj.code, obj.default)
@@ -229,12 +258,25 @@ export default {
       }
     }
   },
+  methods: {
+    setModelAttr (key, val) {
+      this.$set(this.searchParam, key, val)
+    }
+
+  },
   computed: {
     paramOption () {
       return this.dataParamOption || []
     },
     searchParam () {
       return this.value || {}
+    },
+    allFlagOption () {
+      if (this.allFlag === 'true') {
+        return true
+      } else {
+        return false
+      }
     }
 
   },

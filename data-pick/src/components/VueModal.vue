@@ -237,8 +237,6 @@ export default {
       modalTitle: '',
       modalId: guid()
     }
-    let modalInfo = {
-    }
     // 扩展信息
     let modalExtraInfo = {
     }
@@ -274,7 +272,6 @@ export default {
     }
 
     return {
-      modalInfo: modalInfo,
       modalExtraInfo: modalExtraInfo,
       defaultParams: defaultParams,
       choseOptions: choseOptions,
@@ -285,9 +282,6 @@ export default {
   },
   beforeMount () {
     let Vue = this
-    // 绑定对象初始化
-    this.modalInfo = {}
-    this.modalExtraInfo = {}
     for (let obj of this.paramOption) {
       if (obj.viewType.indexOf('Multi') > 0 || obj.default instanceof Array) {
         Vue.$set(this.modalInfo, obj.code, [])
@@ -386,8 +380,10 @@ export default {
       }
     },
     paramOption () {
-      let tempItem = this.dataParamOption
-      return tempItem
+      return this.dataParamOption
+    },
+    modalInfo () {
+      return this.value || {}
     }
 
   },
@@ -414,18 +410,6 @@ export default {
         $('#' + this.modalId).modal('show')
       } else {
         $('#' + this.modalId).modal('hide')
-      }
-    },
-    value: function (val) {
-      var modalInfo = this.modalInfo
-      let Vue = this
-      // 删除旧属性
-      for (let index in modalInfo) {
-        Vue.$delete(this.modalInfo, index)
-      }
-      // 增加新属性
-      for (let index in val) {
-        Vue.$set(this.modalInfo, index, val[index])
       }
     }
   }
