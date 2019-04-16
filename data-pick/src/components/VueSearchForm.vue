@@ -37,7 +37,7 @@
                         :options="choseOptionsNoSearch"
                         v-model="searchParam[item.code]">
               <option disabled>=={{item.name}}==</option>
-              <option value="">全部</option>
+              <option v-if="allFlagOption === true" value="">全部</option>
               <option v-bind:key="option.key" v-for="option in item.searchOptions"
                       v-bind:value="option.key">
                 {{option.value}}
@@ -54,7 +54,7 @@
                         :options="multipleChoseOptions"
                         v-model="searchParam[item.code]">
               <option disabled>=={{item.name}}==</option>
-              <option value="">全部</option>
+              <option v-if="allFlagOption === true" value="">全部</option>
               <option v-bind:key="option.key" v-for="option in item.searchOptions"
                       v-bind:value="option.key">
                 {{option.value}}
@@ -70,7 +70,7 @@
                         :options="choseOptions"
                         v-model="searchParam[item.code]">
               <option disabled>=={{item.name}}==</option>
-              <option value="">全部</option>
+              <option v-if="allFlagOption === true" value="">全部</option>
               <option v-bind:key="option.key" v-for="option in item.searchOptions"
                       v-bind:value="option.key">
                 {{option.value}}
@@ -88,7 +88,7 @@
                         v-bind:disabled="item.disable"
                         v-model="searchParam[item.code]">
               <option disabled>=={{item.name}}==</option>
-              <option value="">全部</option>
+              <option v-if="allFlagOption === true" value="">全部</option>
               <option v-bind:key="option.code" v-for="option in item.options"
                       v-bind:value="option.code">
                 {{option.name}}
@@ -107,7 +107,7 @@
                         :options="multipleChoseOptions"
                         v-model="searchParam[item.code]">
               <option disabled>=={{item.name}}==</option>
-              <option value="">全部</option>
+              <option v-if="allFlagOption === true" value="">全部</option>
               <option v-bind:key="option.code" v-for="option in item.options"
                       v-bind:value="option.code">
                 {{option.name}}
@@ -154,7 +154,7 @@ import 'cabin/lib/daterangepicker/moment'
 import 'cabin/lib/chosen/chosen.jquery.js'
 import DatePick from './DatePick'
 
-let VueChosen = require('cabin/widgets/vueChosen/vueChosen');
+let VueChosen = require('cabin/widgets/vueChosen/vueChosen')
 
 export default {
   name: 'VueSearchForm',
@@ -169,6 +169,12 @@ export default {
       type: Array,
       default: () => {
         return []
+      }
+    },
+    'allFlag': {
+      type: Boolean,
+      default: () => {
+        return true
       }
     }
   },
@@ -190,7 +196,7 @@ export default {
 
     let defaultParams = {
       modalId: guid()
-    };
+    }
 
     // chose参数
     let choseOptions = {
@@ -199,7 +205,7 @@ export default {
       max_selected_options: 1, // 当select为多选时，最多选择个数
       disable_search: false, // 开启搜索功能
       width: '100%'
-    };
+    }
     // 不带搜索框chose
     let choseOptionsNoSearch = {
       no_results_text: '没有找到',
@@ -207,21 +213,21 @@ export default {
       max_selected_options: 1, // 当select为多选时，最多选择个数
       disable_search: true,
       width: '100%'
-    };
+    }
 
     // chose参数,多选
     let multipleChoseOptions = {
       no_results_text: '没有找到',
       search_contains: true, // 关键字模糊搜索，设置为false，则只从开头开始匹配
       width: '100%'
-    };
+    }
     // 不带搜索框chose,多选
     let multipleChoseOptionsNoSearch = {
       no_results_text: '没有找到',
       search_contains: true, // 关键字模糊搜索，设置为false，则只从开头开始匹配
       disable_search: true,
       width: '100%'
-    };
+    }
 
     return {
       defaultParams: defaultParams,
@@ -232,15 +238,15 @@ export default {
     }
   },
   beforeMount () {
-    let Vue = this;
+    let Vue = this
     // 绑定对象初始化
     for (let obj of this.paramOption) {
-      if (obj.viewType.indexOf('Multi') > 0|| obj.viewType.indexOf('multi') > 0 || obj.default instanceof Array) {
-        if(obj.default != null && typeof obj.default !== 'undefined' && obj.default !== ""){
-          let arr = [];
-          arr.push(obj.default);
+      if (obj.viewType.indexOf('Multi') > 0 || obj.viewType.indexOf('multi') > 0 || obj.default instanceof Array) {
+        if (obj.default != null && typeof obj.default !== 'undefined' && obj.default !== '') {
+          let arr = []
+          arr.push(obj.default)
           Vue.$set(this.searchParam, obj.code, arr)
-        }else {
+        } else {
           Vue.$set(this.searchParam, obj.code, [])
         }
       } else {
@@ -253,10 +259,10 @@ export default {
     }
   },
   methods: {
-    setModelAttr(key,val){
-      console.log("赋值:key:"+key+",val:"+val);
+    setModelAttr (key, val) {
       this.$set(this.searchParam, key, val)
     }
+
   },
   computed: {
     paramOption () {
@@ -264,6 +270,9 @@ export default {
     },
     searchParam () {
       return this.value || {}
+    },
+    allFlagOption () {
+      return this.allFlag || true
     }
 
   },
