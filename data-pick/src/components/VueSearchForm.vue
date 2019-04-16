@@ -172,9 +172,9 @@ export default {
       }
     },
     'allFlag': {
-      type: Boolean,
+      type: String,
       default: () => {
-        return true
+        return 'true'
       }
     }
   },
@@ -272,7 +272,11 @@ export default {
       return this.value || {}
     },
     allFlagOption () {
-      return this.allFlag || true
+      if (this.allFlag === 'true') {
+        return true
+      } else {
+        return false
+      }
     }
 
   },

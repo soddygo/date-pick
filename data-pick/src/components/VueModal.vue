@@ -185,6 +185,7 @@
 import 'jQuery'
 import 'cabin/lib/daterangepicker/moment'
 import 'cabin/lib/chosen/chosen.jquery.js'
+
 let VueChosen = require('cabin/widgets/vueChosen/vueChosen')
 
 export default {
@@ -237,9 +238,6 @@ export default {
       modalTitle: '',
       modalId: guid()
     }
-    let modalInfo = {
-    }
-
     // chose参数
     let choseOptions = {
       no_results_text: '没有找到',
@@ -271,7 +269,6 @@ export default {
     }
 
     return {
-      modalInfo: modalInfo,
       defaultParams: defaultParams,
       choseOptions: choseOptions,
       choseOptionsNoSearch: choseOptionsNoSearch,
@@ -281,8 +278,6 @@ export default {
   },
   beforeMount () {
     let Vue = this
-    // 绑定对象初始化
-    this.modalInfo = {}
     for (let obj of this.paramOption) {
       if (obj.viewType.indexOf('Multi') > 0 || obj.default instanceof Array) {
         Vue.$set(this.modalInfo, obj.code, [])
@@ -294,6 +289,7 @@ export default {
         }
       }
     }
+    console.log("start")
   },
   mounted () {
     let modalId = this.defaultParams.modalId
@@ -363,8 +359,10 @@ export default {
       }
     },
     paramOption () {
-      let tempItem = this.dataParamOption
-      return tempItem
+      return this.dataParamOption
+    },
+    modalInfo () {
+      return this.value || {}
     }
 
   },
@@ -391,18 +389,6 @@ export default {
         $('#' + this.modalId).modal('show')
       } else {
         $('#' + this.modalId).modal('hide')
-      }
-    },
-    value: function (val) {
-      var modalInfo = this.modalInfo
-      let Vue = this
-      // 删除旧属性
-      for (let index in modalInfo) {
-        Vue.$delete(this.modalInfo, index)
-      }
-      // 增加新属性
-      for (let index in val) {
-        Vue.$set(this.modalInfo, index, val[index])
       }
     }
   }
