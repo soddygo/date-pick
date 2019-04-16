@@ -10,7 +10,7 @@
               <span>{{modalTitle}}</span>
             </div>
             <div class="stage-title pull-right">
-              <span class="cabin-big-icon close"  aria-label="Close"
+              <span class="cabin-big-icon close" aria-label="Close"
                     v-on:click="hideModal">
               </span>
             </div>
@@ -24,32 +24,35 @@
                      v-if="item.viewType ==='text'  "
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--输入框-->
-                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"  class="font-error">* </span>{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"
+                                                     class="font-error">* </span>{{item.name}}</label>
                   <input type="text" class="form-control" v-bind:placeholder="item.name"
                          v-bind:disabled="viewFlag||item.modalDisable"
                          v-model="modalInfo[item.code]"
-                         />
+                  />
                 </div>
                 <div :key="item.id"
                      v-else-if="item.viewType ==='number' "
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--输入框-->
-                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"
+                                                     class="font-error">* </span>{{item.name}}</label>
                   <input type="number" class="form-control" v-bind:placeholder="item.name"
                          v-bind:disabled="viewFlag||item.modalDisable"
                          v-model="modalInfo[item.code]"
-                         />
+                  />
                 </div>
                 <div :key="item.id"
                      v-else-if="item.viewType ==='textarea' "
                      class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <!--输入框-->
-                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"
+                                                     class="font-error">* </span>{{item.name}}</label>
                   <textarea name="" class="form-control" cols="50" rows="10"
                             v-bind:placeholder="item.name"
                             v-bind:disabled="viewFlag||item.modalDisable"
                             v-model="modalInfo[item.code]"
-                            >
+                  >
                   </textarea>
                 </div>
 
@@ -57,16 +60,17 @@
                      v-else-if="item.viewType ==='options' "
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--带搜索框下拉框-->
-                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"
+                                                     class="font-error">* </span>{{item.name}}</label>
                   <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
                               v-bind:disabled="viewFlag||item.modalDisable"
                               :options="choseOptionsNoSearch"
                               v-model="modalInfo[item.code]"
-                              >
+                  >
                     <option disabled>=={{item.name}}==</option>
                     <option v-bind:key="option.key" v-for="option in item.options"
                             v-bind:value="option.key"
-                            >
+                    >
                       {{option.value}}
                     </option>
                   </vue-chosen>
@@ -75,16 +79,17 @@
                      v-else-if="item.viewType ==='optionsSearch' "
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--没搜索框的下拉框-->
-                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"
+                                                     class="font-error">* </span>{{item.name}}</label>
                   <vue-chosen type="text" class="form-control" v-bind:placeholder="item.name"
                               v-bind:disabled="viewFlag||item.modalDisable"
                               :options="choseOptions"
                               v-model="modalInfo[item.code]"
-                              >
+                  >
                     <option disabled>=={{item.name}}==</option>
                     <option v-bind:key="option.key" v-for="option in item.options"
                             v-bind:value="option.key"
-                            >
+                    >
                       {{option.value}}
                     </option>
                   </vue-chosen>
@@ -94,16 +99,17 @@
                      v-else-if="item.viewType ==='remoteOption' "
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--下拉框-->
-                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"  class="font-error">* </span>{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"
+                                                     class="font-error">* </span>{{item.name}}</label>
                   <vue-chosen type="text" class="form-control"
                               v-bind:disabled="viewFlag||item.modalDisable"
                               :options="choseOptions"
                               v-model="modalInfo[item.code]"
-                              >
+                  >
                     <option disabled>=={{item.name}}==</option>
                     <option v-bind:key="option.code" v-for="option in item.options"
                             v-bind:value="option.code"
-                            >
+                    >
                       {{option.name}}
                     </option>
                   </vue-chosen>
@@ -114,17 +120,18 @@
 
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--下拉框-->
-                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"
+                                                     class="font-error">* </span>{{item.name}}</label>
                   <vue-chosen type="text" class="form-control"
                               multiple
                               v-bind:disabled="viewFlag||item.modalDisable"
                               :options="multipleChoseOptions"
                               v-model="modalInfo[item.code]"
-                              >
+                  >
                     <option disabled>=={{item.name}}==</option>
                     <option v-bind:key="option.code" v-for="option in item.options"
                             v-bind:value="option.code"
-                            >
+                    >
                       {{option.name}}
                     </option>
                   </vue-chosen>
@@ -133,7 +140,8 @@
                      v-else-if="item.viewType ==='time'"
                      class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <!--下拉框-->
-                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true" class="font-error">* </span>{{item.name}}</label>
+                  <label class="control-label"><span v-if="modalExtraInfo[item.code].required === true"
+                                                     class="font-error">* </span>{{item.name}}</label>
                   <input type="text" class="form-control icondate"
                          v-bind:disabled="viewFlag||item.modalDisable"
                          v-bind:placeholder="item.name" style="margin-bottom:10px;"
@@ -142,8 +150,8 @@
                 </div>
                 <!--行模块-->
                 <div :key="item.id"
-                v-else-if="item.viewType ==='switch'"
-                  class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                     v-else-if="item.viewType ==='switch'"
+                     class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <label class="control-label">{{item.name}}</label>
                   <!--行模块：内容-->
                   <div class="clearfix base-form-vertical-lists">
@@ -153,7 +161,7 @@
                           <input type="checkbox" v-bind:id="item.id" v-model="modalInfo[item.code]">
                           <label v-bind:for="item.id">
                             <span v-bind:key="option.key" v-for="option in item.options"
-                                    v-bind:value="option.key">
+                                  v-bind:value="option.key">
                               {{option.value}}
                             </span>
                           </label>
@@ -171,7 +179,7 @@
         <div class="modal-footer">
 
           <button type="button" class="btn btn-primary"
-                v-on:click="commit" >{{commitTitle}}
+                  v-on:click="commit">{{commitTitle}}
           </button>
           <button type="button" class="btn btn-default" v-on:click="hideModal">取消
           </button>
@@ -185,6 +193,7 @@
 import 'jQuery'
 import 'cabin/lib/daterangepicker/moment'
 import 'cabin/lib/chosen/chosen.jquery.js'
+
 let VueChosen = require('cabin/widgets/vueChosen/vueChosen')
 
 export default {
@@ -193,11 +202,15 @@ export default {
   props: {
     'value': {
       type: Object,
-      default: () => { return {} }
+      default: () => {
+        return {}
+      }
     },
     'dataParamOption': {
       type: Array,
-      default: () => { return [] }
+      default: () => {
+        return []
+      }
     },
     'dataCommitTitle': {
       type: String,
@@ -238,8 +251,7 @@ export default {
       modalId: guid()
     }
     // 扩展信息
-    let modalExtraInfo = {
-    }
+    let modalExtraInfo = {}
 
     // chose参数
     let choseOptions = {
@@ -309,7 +321,6 @@ export default {
           Vue.$set(this.modalExtraInfo[obj.code], 'required', true)
         }
       }
-
     }
   },
   mounted () {
@@ -330,6 +341,19 @@ export default {
           } else {
             Vue.$set(this.modalInfo, obj.code, {})
           }
+        }
+      }
+    },
+    // 更改某个属性的options
+    updateOpiton (codeName, options) {
+      for (let item of this.paramOption) {
+        if (item.code === codeName) {
+          item.options.splice(0, item.options.length)
+
+          for (let option of options) {
+            item.options.push(option)
+          }
+          break
         }
       }
     },
