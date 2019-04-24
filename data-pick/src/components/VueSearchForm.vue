@@ -261,6 +261,34 @@ export default {
   methods: {
     setModelAttr (key, val) {
       this.$set(this.searchParam, key, val)
+    },
+    getModelAttr (key) {
+      return this.searchParam[key]
+    },
+    // 更改某个属性的options
+    updateOpiton (codeName, options) {
+      for (let item of this.paramOption) {
+        if (item.code === codeName) {
+          item.options.splice(0, item.options.length)
+
+          for (let option of options) {
+            item.options.push(option)
+          }
+          break
+        }
+      }
+    },
+    // 读取optons
+    getOpiton (codeName) {
+      for (let item of this.paramOption) {
+        if (item.code === codeName) {
+          let copyOptions = []
+          for (let option of item.options) {
+            copyOptions.push(option)
+          }
+          return copyOptions
+        }
+      }
     }
 
   },
