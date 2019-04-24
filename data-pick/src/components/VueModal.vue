@@ -357,6 +357,29 @@ export default {
         }
       }
     },
+    // 获取某个属性的options
+    getOpiton (codeName) {
+      for (let item of this.paramOption) {
+        if (item.code === codeName) {
+          let copyOptions = []
+
+          for (let option of item.options) {
+            copyOptions.push(option)
+          }
+          return copyOptions
+        }
+      }
+    },
+    addOpiton (codeName, options) {
+      for (let item of this.paramOption) {
+        if (item.code === codeName) {
+          for (let option of options) {
+            item.options.push(option)
+          }
+          break
+        }
+      }
+    },
     // 获取modal id
     getModalId () {
       this.$emit('data-modal-id', this.modalInfo)
