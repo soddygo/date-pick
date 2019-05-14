@@ -1,5 +1,5 @@
 <template>
-  <div class="cabin-base-form clearfix">
+  <div class="cabin-search-form">
     <div class="form-horizontal clearfix">
       <template v-for="(item,index) in paramOption">
         <template v-if="item.searchFlag === 1">
